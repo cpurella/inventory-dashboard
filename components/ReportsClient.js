@@ -60,7 +60,7 @@ export default function ReportsClient({ items }) {
   return (
     <div className="space-y-4 text-slate-200">
       <div className="text-xs text-slate-500 print:hidden">
-        ఏదైనా item వెతికి select చేయండి — దాని పూర్తి రిపోర్ట్ (12 నెలల movement) ఇక్కడ కనిపిస్తుంది. Print / Save as PDF లేదా CSV గా డౌన్‌లోడ్ చేసుకోవచ్చు.
+        Search for any item below to see its full report (12-month movement). You can print it, save as PDF, or download as CSV.
       </div>
 
       {/* Search */}
@@ -68,7 +68,7 @@ export default function ReportsClient({ items }) {
         <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           type="text"
-          placeholder="Item code లేదా పేరు టైప్ చేయండి..."
+          placeholder="Type item code or name..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
@@ -92,7 +92,7 @@ export default function ReportsClient({ items }) {
       {!selected && (
         <div className="bg-[#12151c] border border-[#232733] rounded-xl p-10 text-center text-slate-500 print:hidden">
           <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          రిపోర్ట్ చూడటానికి పైన item వెతకండి.
+          Search for an item above to view its report.
         </div>
       )}
 
