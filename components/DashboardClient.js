@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip,
 } from "recharts";
+import { Package, AlertTriangle, Clock, Archive, CalendarClock, Search } from "lucide-react";
 import { MONTH_KEYS, MONTH_LABELS, STOCK_AS_OF, BULK_CATEGORIES } from "../lib/data";
 
 function fmt(n) {
@@ -139,13 +140,16 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
 
       {/* Search + filters row */}
       <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-        <input
-          type="text"
-          placeholder="Find code or description..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-80 bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
-        />
+        <div className="relative w-full md:w-80">
+          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Find code or description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+          />
+        </div>
         <div className="flex items-center gap-2 flex-wrap">
           <label className="text-xs uppercase tracking-wide text-slate-500">Category</label>
           <select
@@ -159,26 +163,27 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
             ))}
           </select>
           <label className="text-xs uppercase tracking-wide text-slate-500">Movement Month</label>
-          <select
+          <input
+            type="month"
             value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm"
-          >
-            {MONTH_KEYS.map((mk) => (
-              <option key={mk} value={mk}>{MONTH_LABELS[mk]} 2026</option>
-            ))}
-          </select>
+            min="2026-01"
+            max="2026-12"
+            onChange={(e) => e.target.value && setMonth(e.target.value)}
+            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm text-slate-200 [color-scheme:dark]"
+          />
         </div>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        <StatCard label="TRACKED ITEMS" value={totalItems} sub={`As of ${STOCK_AS_OF}`} />
-        <StatCard label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" />
-        <StatCard label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="amber" />
-        <StatCard label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" />
+        <StatCard icon={Package} label="TRACKED ITEMS" value={totalItems} sub={`As of ${STOCK_AS_OF}`} />
+        <StatCard icon={AlertTriangle} label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" />
+        <StatCard icon={Clock} label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="amber" />
+        <StatCard icon={Archive} label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" />
         <div className="bg-[#12151c] border border-[#232733] rounded-xl p-3">
-          <div className="text-[10px] uppercase tracking-wider text-slate-500">Next Reorder Due</div>
+          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500">
+            <CalendarClock className="w-3.5 h-3.5" /> Next Reorder Due
+          </div>
           {nextReorderItem ? (
             <>
               <div className="text-sm font-semibold text-white mt-1.5 truncate" title={nextReorderItem.description}>
@@ -329,7 +334,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
   );
 }
 
-function StatCard({ label, value, sub, accent = "default" }) {
+function StatCard({ icon: Icon, label, value, sub, accent = "default" }) {
   const accentClass = {
     default: "text-white",
     rose: "text-rose-400",
@@ -339,7 +344,9 @@ function StatCard({ label, value, sub, accent = "default" }) {
 
   return (
     <div className="bg-[#12151c] border border-[#232733] rounded-xl p-3">
-      <div className="text-[10px] uppercase tracking-wider text-slate-500">{label}</div>
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500">
+        {Icon && <Icon className="w-3.5 h-3.5" />} {label}
+      </div>
       <div className={`text-2xl font-semibold mt-1.5 ${accentClass}`}>{fmt(value)}</div>
       <div className="text-[11px] text-slate-500 mt-0.5">{sub}</div>
     </div>

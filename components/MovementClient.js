@@ -99,15 +99,14 @@ export default function MovementClient({ items, categories, defaultMonth }) {
             ))}
           </select>
           <label className="text-xs uppercase tracking-wide text-slate-500">Month</label>
-          <select
+          <input
+            type="month"
             value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm"
-          >
-            {MONTH_KEYS.map((mk) => (
-              <option key={mk} value={mk}>{MONTH_LABELS[mk]} 2026</option>
-            ))}
-          </select>
+            min="2026-01"
+            max="2026-12"
+            onChange={(e) => e.target.value && setMonth(e.target.value)}
+            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm text-slate-200 [color-scheme:dark]"
+          />
         </div>
       </div>
 

@@ -7,6 +7,7 @@ const NAV = [
   { label: "Dashboard", href: "/" },
   { label: "Master Catalogue", href: "/#catalogue" },
   { label: "Movement Reports", href: "/movement" },
+  { label: "Item Reports", href: "/reports" },
 ];
 
 export default function Sidebar() {
@@ -31,7 +32,8 @@ export default function Sidebar() {
       </div>
       <nav className="space-y-1 mb-6">
         {NAV.map((n) => {
-          const active = n.href === "/" ? pathname === "/" : pathname.startsWith(n.href.split("#")[0]) && n.href !== "/";
+          const hrefPath = n.href.split("#")[0] || "/";
+          const active = hrefPath === "/" ? pathname === "/" : pathname === hrefPath || pathname.startsWith(hrefPath + "/");
           return (
             <Link
               key={n.label}

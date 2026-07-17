@@ -19,3 +19,16 @@ table {
   background: #2a2f3a;
   border-radius: 4px;
 }
+
+@media print {
+  aside, header {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+}
