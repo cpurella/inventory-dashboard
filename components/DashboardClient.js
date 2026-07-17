@@ -40,6 +40,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
         usage: md.usage,
         closing: md.closing,
         runoutDays: it.runoutDays,
+        runoutDate: it.runoutDate,
       };
     });
   }, [items, month]);
@@ -87,13 +88,34 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
   const reorderNow = categoryFiltered.filter((r) => r.runoutDays != null && r.runoutDays > 15 && r.runoutDays <= 30).length;
   const dormantLines = categoryFiltered.filter((r) => r.currentStock === 0).length;
 
-  // ---- Bulk commodity levels: real bulk categories, sorted by current stock ----
+  // The single most urgent item to reorder within the current filter.
+  const nextReorderItem = useMemo(() => {
+    const withDates = categoryFiltered.filter((r) => r.runoutDate && r.runoutDays != null);
+    if (withDates.length === 0) return null;
+    return [...withDates].sort((a, b) => a.runoutDays - b.runoutDays)[0];
+  }, [categoryFiltered]);
+
+  // ---- Bulk commodity levels: respects the active category filter.
+  // When "All" is selected, show ONE representative (highest-stock) item per
+  // true bulk category, so a single category (e.g. Steel) can't dominate all 4 cards.
+  // When a specific category is selected, show the top items within it.
   const bulkCommodities = useMemo(() => {
-    return [...rows]
-      .filter((r) => BULK_CATEGORIES.includes(r.category) && r.currentStock > 0)
+    if (category === "All") {
+      return BULK_CATEGORIES
+        .map((cat) => {
+          const top = rows
+            .filter((r) => r.category === cat && r.currentStock > 0)
+            .sort((a, b) => b.currentStock - a.currentStock)[0];
+          return top || null;
+        })
+        .filter(Boolean)
+        .slice(0, 8);
+    }
+    return [...categoryFiltered]
+      .filter((r) => r.currentStock > 0)
       .sort((a, b) => b.currentStock - a.currentStock)
-      .slice(0, 4);
-  }, [rows]);
+      .slice(0, 8);
+  }, [rows, categoryFiltered, category]);
 
   // ---- Stock concentration donut: current stock share by category ----
   const categoryBreakdown = useMemo(() => {
@@ -110,7 +132,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
   }, [categoryFiltered]);
 
   return (
-    <div className="space-y-6 text-slate-200">
+    <div className="space-y-4 text-slate-200">
       <div className="text-xs text-slate-500">
         Physical stock balance as of <span className="text-slate-300">{STOCK_AS_OF}</span> · monthly movement history below is separate and can be browsed by month.
       </div>
@@ -122,14 +144,14 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
           placeholder="Find code or description..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-80 bg-[#12151c] border border-[#232733] rounded-md px-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+          className="w-full md:w-80 bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
         />
         <div className="flex items-center gap-2 flex-wrap">
           <label className="text-xs uppercase tracking-wide text-slate-500">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-2 text-sm"
+            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm"
           >
             <option value="All">All categories</option>
             {categories.map((c) => (
@@ -140,7 +162,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
           <select
             value={month}
             onChange={(e) => setMonth(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-2 text-sm"
+            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm"
           >
             {MONTH_KEYS.map((mk) => (
               <option key={mk} value={mk}>{MONTH_LABELS[mk]} 2026</option>
@@ -150,25 +172,47 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <StatCard label="TRACKED ITEMS" value={totalItems} sub={`As of ${STOCK_AS_OF}`} />
         <StatCard label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" />
         <StatCard label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="amber" />
         <StatCard label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" />
+        <div className="bg-[#12151c] border border-[#232733] rounded-xl p-3">
+          <div className="text-[10px] uppercase tracking-wider text-slate-500">Next Reorder Due</div>
+          {nextReorderItem ? (
+            <>
+              <div className="text-sm font-semibold text-white mt-1.5 truncate" title={nextReorderItem.description}>
+                {nextReorderItem.description}
+              </div>
+              <div className="text-[11px] text-amber-400 mt-0.5">
+                {nextReorderItem.runoutDate} · {fmt(nextReorderItem.runoutDays)} days
+              </div>
+            </>
+          ) : (
+            <div className="text-sm text-slate-500 mt-2">No data</div>
+          )}
+        </div>
       </div>
 
       {/* Bulk commodities + donut */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-[#12151c] border border-[#232733] rounded-xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-slate-300">Bulk commodity levels</h3>
-            <span className="text-[11px] text-slate-500 uppercase tracking-wider">Cement · LPG · Fuel · Aggregate · Steel · Sands</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="lg:col-span-2 bg-[#12151c] border border-[#232733] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-slate-300">
+              {category === "All" ? "Bulk commodity levels" : `Top items — ${category}`}
+            </h3>
+            {category === "All" && (
+              <span className="text-[11px] text-slate-500 uppercase tracking-wider">{BULK_CATEGORIES.join(" · ")}</span>
+            )}
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {bulkCommodities.map((c) => (
               <div key={c.id} className="border border-[#232733] rounded-lg p-3 bg-[#0e1117]">
-                <div className="w-8 h-8 rounded bg-amber-500/15 text-amber-400 flex items-center justify-center text-xs font-bold mb-2">
-                  {c.uom.trim().slice(0, 2)}
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="w-7 h-7 rounded bg-amber-500/15 text-amber-400 flex items-center justify-center text-[10px] font-bold">
+                    {c.uom.trim().slice(0, 2)}
+                  </div>
+                  <span className="text-[9px] uppercase tracking-wide text-slate-500">{c.category}</span>
                 </div>
                 <div className="text-xs text-slate-400 truncate" title={c.description}>
                   {c.description}
@@ -177,24 +221,24 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
                   {fmt(c.currentStock)} <span className="text-xs text-slate-500">{c.uom}</span>
                 </div>
                 <div className="text-[11px] text-slate-500 mt-1">
-                  {c.runoutDays != null ? `${fmt(c.runoutDays)} days at average draw` : "no draw data"}
+                  {c.runoutDays != null ? `${fmt(c.runoutDays)}d left · reorder ${c.runoutDate}` : "no draw data"}
                 </div>
               </div>
             ))}
             {bulkCommodities.length === 0 && (
               <div className="col-span-4 text-sm text-slate-500 py-6 text-center">
-                No bulk-category stock to show for this filter.
+                No stock to show for this filter.
               </div>
             )}
           </div>
         </div>
 
-        <div className="bg-[#12151c] border border-[#232733] rounded-xl p-5">
+        <div className="bg-[#12151c] border border-[#232733] rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-slate-300">Stock concentration</h3>
             <span className="text-[11px] text-slate-500 uppercase tracking-wider">By category</span>
           </div>
-          <div className="h-52">
+          <div className="h-40">
             {categoryBreakdown.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -202,8 +246,8 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
                     data={categoryBreakdown}
                     dataKey="value"
                     nameKey="name"
-                    innerRadius={55}
-                    outerRadius={80}
+                    innerRadius={42}
+                    outerRadius={64}
                     paddingAngle={2}
                   >
                     {categoryBreakdown.map((entry, i) => (
@@ -222,9 +266,9 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
               </div>
             )}
           </div>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
             {categoryBreakdown.map((d, i) => (
-              <div key={d.name} className="flex items-center gap-1 text-[11px] text-slate-400">
+              <div key={d.name} className="flex items-center gap-1 text-[10px] text-slate-400">
                 <span className="w-2 h-2 rounded-full inline-block" style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} />
                 {d.name}
               </div>
@@ -235,41 +279,43 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
 
       {/* Item table */}
       <div id="catalogue" className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#232733] flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between">
           <h3 className="text-sm font-medium text-slate-300">
             Master catalogue — current stock, with {MONTH_LABELS[month]} 2026 movement
           </h3>
           <span className="text-[11px] text-slate-500">{filtered.length} of {items.length} items</span>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead>
+            <thead className="sticky top-0 bg-[#12151c] z-10">
               <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
-                <th className="px-5 py-3 cursor-pointer select-none" onClick={() => toggleSort("code")}>Code{sortArrow("code")}</th>
-                <th className="px-5 py-3 cursor-pointer select-none" onClick={() => toggleSort("description")}>Item Description{sortArrow("description")}</th>
-                <th className="px-5 py-3">Category</th>
-                <th className="px-5 py-3">UOM</th>
-                <th className="px-5 py-3 text-right cursor-pointer select-none" onClick={() => toggleSort("currentStock")}>Current Stock{sortArrow("currentStock")}</th>
-                <th className="px-5 py-3 text-right cursor-pointer select-none" onClick={() => toggleSort("added")}>Added ({MONTH_LABELS[month]}){sortArrow("added")}</th>
-                <th className="px-5 py-3 text-right cursor-pointer select-none" onClick={() => toggleSort("usage")}>Usage ({MONTH_LABELS[month]}){sortArrow("usage")}</th>
-                <th className="px-5 py-3 text-right cursor-pointer select-none" onClick={() => toggleSort("runoutDays")}>Run-out Days{sortArrow("runoutDays")}</th>
+                <th className="px-4 py-2.5 cursor-pointer select-none" onClick={() => toggleSort("code")}>Code{sortArrow("code")}</th>
+                <th className="px-4 py-2.5 cursor-pointer select-none" onClick={() => toggleSort("description")}>Item Description{sortArrow("description")}</th>
+                <th className="px-4 py-2.5">Category</th>
+                <th className="px-4 py-2.5">UOM</th>
+                <th className="px-4 py-2.5 text-right cursor-pointer select-none" onClick={() => toggleSort("currentStock")}>Current Stock{sortArrow("currentStock")}</th>
+                <th className="px-4 py-2.5 text-right cursor-pointer select-none" onClick={() => toggleSort("added")}>Added ({MONTH_LABELS[month]}){sortArrow("added")}</th>
+                <th className="px-4 py-2.5 text-right cursor-pointer select-none" onClick={() => toggleSort("usage")}>Usage ({MONTH_LABELS[month]}){sortArrow("usage")}</th>
+                <th className="px-4 py-2.5 text-right cursor-pointer select-none" onClick={() => toggleSort("runoutDays")}>Run-out Days{sortArrow("runoutDays")}</th>
+                <th className="px-4 py-2.5 text-right">Next Order</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((r) => (
                 <tr key={r.id} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
-                  <td className="px-5 py-2.5 font-mono text-xs text-slate-400">{r.code}</td>
-                  <td className="px-5 py-2.5">
+                  <td className="px-4 py-2 font-mono text-xs text-slate-400">{r.code}</td>
+                  <td className="px-4 py-2">
                     <Link href={`/item/${r.id}`} className="text-amber-400 hover:text-amber-300 hover:underline font-medium">
                       {r.description}
                     </Link>
                   </td>
-                  <td className="px-5 py-2.5 text-slate-400 text-xs">{r.category}</td>
-                  <td className="px-5 py-2.5 text-slate-400">{r.uom}</td>
-                  <td className="px-5 py-2.5 text-right font-semibold text-white">{fmt(r.currentStock)}</td>
-                  <td className="px-5 py-2.5 text-right text-emerald-400">{fmt(r.added)}</td>
-                  <td className="px-5 py-2.5 text-right text-rose-400">{fmt(r.usage)}</td>
-                  <td className="px-5 py-2.5 text-right">{r.runoutDays != null ? fmt(r.runoutDays) : "-"}</td>
+                  <td className="px-4 py-2 text-slate-400 text-xs">{r.category}</td>
+                  <td className="px-4 py-2 text-slate-400">{r.uom}</td>
+                  <td className="px-4 py-2 text-right font-semibold text-white">{fmt(r.currentStock)}</td>
+                  <td className="px-4 py-2 text-right text-emerald-400">{fmt(r.added)}</td>
+                  <td className="px-4 py-2 text-right text-rose-400">{fmt(r.usage)}</td>
+                  <td className="px-4 py-2 text-right">{r.runoutDays != null ? fmt(r.runoutDays) : "-"}</td>
+                  <td className="px-4 py-2 text-right text-[11px] text-slate-400">{r.runoutDate || "-"}</td>
                 </tr>
               ))}
             </tbody>
@@ -292,10 +338,10 @@ function StatCard({ label, value, sub, accent = "default" }) {
   }[accent];
 
   return (
-    <div className="bg-[#12151c] border border-[#232733] rounded-xl p-4">
-      <div className="text-[11px] uppercase tracking-wider text-slate-500">{label}</div>
-      <div className={`text-3xl font-semibold mt-2 ${accentClass}`}>{fmt(value)}</div>
-      <div className="text-[11px] text-slate-500 mt-1">{sub}</div>
+    <div className="bg-[#12151c] border border-[#232733] rounded-xl p-3">
+      <div className="text-[10px] uppercase tracking-wider text-slate-500">{label}</div>
+      <div className={`text-2xl font-semibold mt-1.5 ${accentClass}`}>{fmt(value)}</div>
+      <div className="text-[11px] text-slate-500 mt-0.5">{sub}</div>
     </div>
   );
 }
