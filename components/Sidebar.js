@@ -8,6 +8,7 @@ const NAV = [
   { label: "Master Catalogue", href: "/#catalogue" },
   { label: "Movement Reports", href: "/movement" },
   { label: "Item Reports", href: "/reports" },
+  { label: "Inventory Thilafushi", href: "/inventory" },
 ];
 
 export default function Sidebar() {
@@ -52,8 +53,14 @@ export default function Sidebar() {
 
       <div className="mt-auto text-[11px] text-slate-500 px-2 flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-        Data loaded — 2026
+        Live database connected
       </div>
+      <Link
+        href="/admin/seed"
+        className="text-[11px] text-slate-600 hover:text-slate-400 px-2 mt-2"
+      >
+        Data setup / reset
+      </Link>
     </aside>
   );
 }

@@ -6,7 +6,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip,
 } from "recharts";
 import { Package, AlertTriangle, Clock, Archive, CalendarClock, Search } from "lucide-react";
-import { MONTH_KEYS, MONTH_LABELS, STOCK_AS_OF, BULK_CATEGORIES } from "../lib/data";
+import { MONTH_KEYS, MONTH_LABELS, BULK_CATEGORIES } from "../lib/constants";
 
 function fmt(n) {
   if (n === null || n === undefined) return "-";
@@ -135,7 +135,9 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
   return (
     <div className="space-y-4 text-slate-200">
       <div className="text-xs text-slate-500">
-        Physical stock balance as of <span className="text-slate-300">{STOCK_AS_OF}</span> · monthly movement history below is separate and can be browsed by month.
+        <span className="inline-flex items-center gap-1.5 text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" /> Live balance
+        </span> · updated instantly as GRN, Usage, and Damage entries are recorded · monthly movement history below can be browsed by month.
       </div>
 
       {/* Search + filters row */}
@@ -176,7 +178,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        <StatCard icon={Package} label="TRACKED ITEMS" value={totalItems} sub={`As of ${STOCK_AS_OF}`} />
+        <StatCard icon={Package} label="TRACKED ITEMS" value={totalItems} sub="Live balance" />
         <StatCard icon={AlertTriangle} label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" />
         <StatCard icon={Clock} label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="amber" />
         <StatCard icon={Archive} label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" />

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Search, Printer, Download, FileText } from "lucide-react";
-import { MONTH_LABELS, STOCK_AS_OF } from "../lib/data";
+import { MONTH_LABELS } from "../lib/constants";
 
 function fmt(n) {
   if (n === null || n === undefined) return "-";
@@ -20,7 +20,7 @@ function downloadCsv(item) {
   lines.push(`Description,"${(item.description || "").replace(/"/g, '""')}"`);
   lines.push(`Category,${item.category}`);
   lines.push(`UOM,${item.uom}`);
-  lines.push(`Current Stock (as of ${STOCK_AS_OF}),${item.currentStock}`);
+  lines.push(`Current Stock (live balance),${item.currentStock}`);
   lines.push(`Run-out Days,${item.runoutDays ?? "-"}`);
   lines.push(`Next Reorder Date,${item.runoutDate ?? "-"}`);
 
@@ -121,7 +121,7 @@ export default function ReportsClient({ items }) {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-              <Metric label="Current Stock" value={fmt(selected.currentStock)} note={`as of ${STOCK_AS_OF}`} />
+              <Metric label="Current Stock" value={fmt(selected.currentStock)} note="live balance" />
               <Metric label="Year Added" value={fmt(selected.yearTotal.added)} valueClass="text-emerald-400 print:text-black" />
               <Metric label="Year Usage" value={fmt(selected.yearTotal.usage)} valueClass="text-rose-400 print:text-black" />
               <Metric label="Avg / Day" value={fmt(selected.avgPerDay)} />

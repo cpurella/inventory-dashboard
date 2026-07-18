@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, ComposedChart, Bar, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from "recharts";
-import { MONTH_LABELS } from "../lib/data";
+import { MONTH_LABELS } from "../lib/constants";
 
 export default function ItemChart({ months }) {
   const data = months.map((m) => ({

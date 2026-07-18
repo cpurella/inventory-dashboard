@@ -1,7 +1,9 @@
 import { getAllItems } from "../../lib/data";
 import ReportsClient from "../../components/ReportsClient";
 
-export default function ReportsPage() {
-  const items = getAllItems();
+export const dynamic = "force-dynamic";
+
+export default async function ReportsPage() {
+  const items = await getAllItems();
   return <ReportsClient items={items} />;
 }

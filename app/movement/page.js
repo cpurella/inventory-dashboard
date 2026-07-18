@@ -1,9 +1,12 @@
-import { getAllItems, getCategories, getLatestActiveMonth } from "../../lib/data";
+import { getAllItems, getCategories } from "../../lib/data";
+import { currentMonthKey } from "../../lib/constants";
 import MovementClient from "../../components/MovementClient";
 
-export default function MovementPage() {
-  const items = getAllItems();
-  const categories = getCategories();
-  const defaultMonth = getLatestActiveMonth();
+export const dynamic = "force-dynamic";
+
+export default async function MovementPage() {
+  const items = await getAllItems();
+  const categories = await getCategories();
+  const defaultMonth = currentMonthKey();
   return <MovementClient items={items} categories={categories} defaultMonth={defaultMonth} />;
 }

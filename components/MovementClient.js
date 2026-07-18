@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { MONTH_KEYS, MONTH_LABELS } from "../lib/data";
+import { MONTH_KEYS, MONTH_LABELS } from "../lib/constants";
 
 function fmt(n) {
   if (n === null || n === undefined) return "-";
