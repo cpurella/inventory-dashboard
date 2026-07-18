@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, PackagePlus, PackageMinus, AlertOctagon, Check } from "lucide-react";
+import { Search, PackagePlus, PackageMinus, AlertOctagon, Check, Pencil, Trash2, X } from "lucide-react";
 
 const TABS = [
   { key: "GRN", label: "Received (GRN)", icon: PackagePlus, color: "emerald" },
@@ -35,6 +35,11 @@ export default function InventoryEntryClient({ initialRecent }) {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [recent, setRecent] = useState(initialRecent || []);
+  const [editingId, setEditingId] = useState(null);
+  const [editQty, setEditQty] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editNote, setEditNote] = useState("");
+  const [rowBusy, setRowBusy] = useState(null);
   const searchTimer = useRef(null);
 
   const tab = TABS.find((t) => t.key === activeTab);
@@ -62,6 +67,67 @@ export default function InventoryEntryClient({ initialRecent }) {
     setSelectedItem(it);
     setQuery("");
     setMatches([]);
+  }
+
+  function startEdit(r) {
+    setEditingId(r.id);
+    setEditQty(String(r.quantity));
+    setEditDate(r.date);
+    setEditNote(r.note || "");
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+  }
+
+  async function saveEdit(r) {
+    if (!editQty || Number(editQty) <= 0) {
+      alert("Quantity must be greater than 0.");
+      return;
+    }
+    setRowBusy(r.id);
+    try {
+      const res = await fetch(`/api/transactions/${r.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity: Number(editQty), date: editDate, note: editNote }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Update failed.");
+      setRecent((prev) =>
+        prev.map((x) =>
+          x.id === r.id ? { ...x, quantity: Number(editQty), date: editDate, note: editNote } : x
+        )
+      );
+      if (selectedItem && selectedItem.id === r.itemId) {
+        setSelectedItem((s) => ({ ...s, currentStock: data.currentStock }));
+      }
+      setEditingId(null);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setRowBusy(null);
+    }
+  }
+
+  async function deleteEntry(r) {
+    if (!window.confirm(`Delete this ${r.type} entry for "${r.description}" (${fmt(r.quantity)} ${r.uom})? This cannot be undone.`)) {
+      return;
+    }
+    setRowBusy(r.id);
+    try {
+      const res = await fetch(`/api/transactions/${r.id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Delete failed.");
+      setRecent((prev) => prev.filter((x) => x.id !== r.id));
+      if (selectedItem && selectedItem.id === r.itemId) {
+        setSelectedItem((s) => ({ ...s, currentStock: data.currentStock }));
+      }
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setRowBusy(null);
+    }
   }
 
   async function handleSubmit(e) {
@@ -248,8 +314,9 @@ export default function InventoryEntryClient({ initialRecent }) {
 
       {/* Recent entries log */}
       <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733]">
+        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between">
           <h3 className="text-sm font-medium text-slate-300">Recent Entries</h3>
+          <span className="text-[11px] text-slate-500">Edit or delete a mistaken entry anytime — the balance recalculates automatically.</span>
         </div>
         <div className="overflow-x-auto max-h-96 overflow-y-auto">
           <table className="w-full text-sm">
@@ -260,23 +327,108 @@ export default function InventoryEntryClient({ initialRecent }) {
                 <th className="px-4 py-2.5">Item</th>
                 <th className="px-4 py-2.5 text-right">Quantity</th>
                 <th className="px-4 py-2.5">Note</th>
+                <th className="px-4 py-2.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {recent.map((r) => {
                 const t = TABS.find((x) => x.key === r.type);
                 const c = COLOR_CLASSES[t?.color || "sky"];
+                const isEditing = editingId === r.id;
+                const busy = rowBusy === r.id;
                 return (
                   <tr key={r.id} className="border-b border-[#1c2029]">
-                    <td className="px-4 py-2 text-slate-400 text-xs">{r.date}</td>
+                    <td className="px-4 py-2 text-slate-400 text-xs">
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          value={editDate}
+                          min="2026-01-01"
+                          max="2026-12-31"
+                          onChange={(e) => setEditDate(e.target.value)}
+                          className="bg-[#0e1117] border border-[#232733] rounded px-1.5 py-1 text-xs w-32 [color-scheme:dark]"
+                        />
+                      ) : (
+                        r.date
+                      )}
+                    </td>
                     <td className="px-4 py-2">
                       <span className={`text-[11px] px-2 py-0.5 rounded-full border ${c.ring} ${c.text}`}>
                         {r.type}
                       </span>
                     </td>
                     <td className="px-4 py-2 text-slate-200">{r.description}</td>
-                    <td className="px-4 py-2 text-right text-white">{fmt(r.quantity)} {r.uom}</td>
-                    <td className="px-4 py-2 text-slate-500 text-xs">{r.note || "-"}</td>
+                    <td className="px-4 py-2 text-right text-white">
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          value={editQty}
+                          onChange={(e) => setEditQty(e.target.value)}
+                          className="bg-[#0e1117] border border-[#232733] rounded px-1.5 py-1 text-xs w-20 text-right"
+                        />
+                      ) : (
+                        `${fmt(r.quantity)} ${r.uom}`
+                      )}
+                    </td>
+                    <td className="px-4 py-2 text-slate-500 text-xs">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editNote}
+                          onChange={(e) => setEditNote(e.target.value)}
+                          className="bg-[#0e1117] border border-[#232733] rounded px-1.5 py-1 text-xs w-full"
+                        />
+                      ) : (
+                        r.note || "-"
+                      )}
+                    </td>
+                    <td className="px-4 py-2 text-right">
+                      {isEditing ? (
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => saveEdit(r)}
+                            className="text-emerald-400 hover:text-emerald-300 disabled:opacity-50"
+                            title="Save"
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={cancelEdit}
+                            className="text-slate-500 hover:text-slate-300"
+                            title="Cancel"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-end gap-3">
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => startEdit(r)}
+                            className="text-slate-400 hover:text-amber-400 disabled:opacity-50"
+                            title="Edit"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => deleteEntry(r)}
+                            className="text-slate-400 hover:text-rose-400 disabled:opacity-50"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 );
               })}

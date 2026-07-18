@@ -2,12 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { ensureSeeded } from "../../../lib/ensure-seeded";
 import { MONTH_KEYS } from "../../../lib/constants";
+import { bumpMonth, recomputeCascade } from "../../../lib/inventory-engine";
 
 export const dynamic = "force-dynamic";
-
-function round2(n) {
-  return Math.round(n * 100) / 100;
-}
 
 export async function POST(request) {
   try {
@@ -37,66 +34,12 @@ export async function POST(request) {
       return NextResponse.json({ error: "Item not found." }, { status: 404 });
     }
 
-    // 1. Log the transaction itself (permanent audit trail).
     const tx = await prisma.transaction.create({
       data: { itemId: id, type, quantity: qty, date: new Date(date), note: note || null },
     });
 
-    // 2. Bump the relevant month's Added / Usage / Damage total.
-    const field = type === "GRN" ? "added" : type === "USAGE" ? "usage" : "damage";
-    await prisma.monthlyMovement.upsert({
-      where: { itemId_month: { itemId: id, month: monthKey } },
-      update: { [field]: { increment: qty } },
-      create: {
-        itemId: id,
-        month: monthKey,
-        opening: 0,
-        added: 0,
-        usage: 0,
-        damage: 0,
-        [field]: qty,
-        closing: 0,
-      },
-    });
-
-    // 3. Recompute the Jan->Dec opening/closing chain so every later month
-    // reflects this change (handles entries logged for any month, not just "today").
-    const months = await prisma.monthlyMovement.findMany({
-      where: { itemId: id },
-      orderBy: { month: "asc" },
-    });
-    const byMonth = Object.fromEntries(months.map((m) => [m.month, m]));
-
-    let running = byMonth[MONTH_KEYS[0]]?.opening ?? 0;
-    for (const mk of MONTH_KEYS) {
-      const row = byMonth[mk];
-      if (!row) continue;
-      const opening = round2(running);
-      const closing = round2(opening + row.added - row.usage - row.damage);
-      if (row.opening !== opening || row.closing !== closing) {
-        await prisma.monthlyMovement.update({
-          where: { id: row.id },
-          data: { opening, closing },
-        });
-      }
-      running = closing;
-    }
-
-    // 4. Update the item's live stock + reorder estimate.
-    const currentStock = round2(running);
-    let runoutDays = null;
-    let runoutDate = null;
-    if (item.avgPerDay > 0) {
-      runoutDays = round2(currentStock / item.avgPerDay);
-      const d = new Date();
-      d.setDate(d.getDate() + Math.max(0, Math.round(runoutDays)));
-      runoutDate = d.toISOString().slice(0, 10);
-    }
-
-    await prisma.item.update({
-      where: { id },
-      data: { currentStock, runoutDays, runoutDate },
-    });
+    await bumpMonth(id, monthKey, type, qty);
+    const currentStock = await recomputeCascade(id);
 
     return NextResponse.json({ ok: true, transaction: tx, currentStock });
   } catch (err) {
