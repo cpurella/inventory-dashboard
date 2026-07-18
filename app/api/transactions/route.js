@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { ensureSeeded } from "../../../lib/ensure-seeded";
-import { MONTH_KEYS } from "../../../lib/constants";
-import { bumpMonth, recomputeCascade } from "../../../lib/inventory-engine";
+import { MONTH_KEYS, getCurrentStock } from "../../../lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -34,13 +33,13 @@ export async function POST(request) {
       return NextResponse.json({ error: "Item not found." }, { status: 404 });
     }
 
+    // Just log the entry -- balances are always computed fresh from
+    // (Excel baseline + every transaction), never mutated in place.
     const tx = await prisma.transaction.create({
       data: { itemId: id, type, quantity: qty, date: new Date(date), note: note || null },
     });
 
-    await bumpMonth(id, monthKey, type, qty);
-    const currentStock = await recomputeCascade(id);
-
+    const currentStock = await getCurrentStock(id);
     return NextResponse.json({ ok: true, transaction: tx, currentStock });
   } catch (err) {
     console.error(err);

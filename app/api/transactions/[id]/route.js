@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { ensureSeeded } from "../../../../lib/ensure-seeded";
-import { MONTH_KEYS } from "../../../../lib/constants";
-import { bumpMonth, recomputeCascade } from "../../../../lib/inventory-engine";
+import { MONTH_KEYS, getCurrentStock } from "../../../../lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -28,13 +27,6 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ error: "Date must fall within 2026." }, { status: 400 });
     }
 
-    const oldMonth = existing.date.toISOString().slice(0, 7);
-
-    // Undo the old effect, then apply the corrected one -- works whether
-    // only the quantity changed, only the date/month changed, or both.
-    await bumpMonth(existing.itemId, oldMonth, existing.type, -existing.quantity);
-    await bumpMonth(existing.itemId, newMonth, existing.type, newQty);
-
     const updated = await prisma.transaction.update({
       where: { id },
       data: {
@@ -44,7 +36,7 @@ export async function PATCH(request, { params }) {
       },
     });
 
-    const currentStock = await recomputeCascade(existing.itemId);
+    const currentStock = await getCurrentStock(existing.itemId);
     return NextResponse.json({ ok: true, transaction: updated, currentStock });
   } catch (err) {
     console.error(err);
@@ -61,10 +53,8 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: "Entry not found." }, { status: 404 });
     }
 
-    const month = existing.date.toISOString().slice(0, 7);
-    await bumpMonth(existing.itemId, month, existing.type, -existing.quantity);
     await prisma.transaction.delete({ where: { id } });
-    const currentStock = await recomputeCascade(existing.itemId);
+    const currentStock = await getCurrentStock(existing.itemId);
 
     return NextResponse.json({ ok: true, currentStock });
   } catch (err) {

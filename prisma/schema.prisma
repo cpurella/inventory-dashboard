@@ -9,6 +9,7 @@ datasource db {
 
 model Item {
   id           Int      @id @default(autoincrement())
+  seedIndex    Int?     @unique // stable row position from the source file, used to merge re-uploads
   code         String
   description  String
   category     String
@@ -29,8 +30,10 @@ model Item {
   @@index([code])
 }
 
-// Historical + live monthly totals. Jan-Jul rows come from the original Excel
-// import; later months accumulate as GRN/Usage/Damage entries are logged.
+// Historical + live monthly totals. "baseline*" fields record what the last
+// uploaded/seeded file said for that month, so a future re-upload can be
+// merged as a DELTA on top of whatever GRN/Usage/Damage entries were logged
+// in the app since -- re-uploading never erases manually logged entries.
 model MonthlyMovement {
   id      Int    @id @default(autoincrement())
   itemId  Int
@@ -42,10 +45,17 @@ model MonthlyMovement {
   damage  Float  @default(0)
   closing Float  @default(0)
 
+  baselineOpening Float   @default(0)
+  baselineAdded   Float   @default(0)
+  baselineUsage   Float   @default(0)
+  baselineDamage  Float   @default(0)
+  baselineSet     Boolean @default(false)
+
   @@unique([itemId, month])
 }
 
 // Live entries logged from the app: GRN (received), USAGE (consumed), DAMAGE (spoilage/loss).
+// These are never touched by a file re-upload.
 model Transaction {
   id        Int      @id @default(autoincrement())
   itemId    Int

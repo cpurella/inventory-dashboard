@@ -56,6 +56,12 @@ export default function Sidebar() {
         Live database connected
       </div>
       <Link
+        href="/admin/upload"
+        className="text-[11px] text-slate-600 hover:text-slate-400 px-2"
+      >
+        Upload inventory file
+      </Link>
+      <Link
         href="/admin/seed"
         className="text-[11px] text-slate-600 hover:text-slate-400 px-2 mt-2"
       >

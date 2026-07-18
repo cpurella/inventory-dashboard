@@ -19,7 +19,8 @@ export async function POST(request) {
     await prisma.item.deleteMany({});
 
     await prisma.item.createMany({
-      data: seedItems.map((it) => ({
+      data: seedItems.map((it, idx) => ({
+        seedIndex: idx,
         code: it.code,
         description: it.description,
         category: it.category || "Uncategorized",
@@ -48,11 +49,15 @@ export async function POST(request) {
           usage: m.usage,
           damage: 0,
           closing: m.closing,
+          baselineOpening: m.opening,
+          baselineAdded: m.added,
+          baselineUsage: m.usage,
+          baselineDamage: 0,
+          baselineSet: true,
         });
       }
     });
 
-    // Insert in chunks to stay well within any single-request payload limits.
     const CHUNK = 1000;
     for (let i = 0; i < monthRows.length; i += CHUNK) {
       await prisma.monthlyMovement.createMany({ data: monthRows.slice(i, i + CHUNK) });
