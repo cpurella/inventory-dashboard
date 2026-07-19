@@ -90,6 +90,60 @@ export default async function ItemPage({ params }) {
           </tbody>
         </table>
       </div>
+      <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
+        <div className="px-5 py-3 border-b border-[#232733] flex items-center justify-between flex-wrap gap-1">
+          <h3 className="font-medium text-slate-300">Bin Card — Transaction Ledger</h3>
+          <span className="text-[11px] text-slate-500">
+            {item.ledger.length} recorded entries · balance reflects only entries shown below
+          </span>
+        </div>
+        {item.ledger.length === 0 ? (
+          <div className="p-8 text-center text-slate-500 text-sm">
+            No individual transactions recorded for this item yet. Log one in{" "}
+            <Link href="/inventory" className="text-amber-400 hover:underline">Inventory Thilafushi</Link>,
+            or import bin-card history from the admin menu.
+          </div>
+        ) : (
+          <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-[#12151c] z-10">
+                <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
+                  <th className="px-5 py-2.5">Date</th>
+                  <th className="px-5 py-2.5">Type</th>
+                  <th className="px-5 py-2.5">Reference / Customer</th>
+                  <th className="px-5 py-2.5 text-right">In</th>
+                  <th className="px-5 py-2.5 text-right">Out</th>
+                  <th className="px-5 py-2.5 text-right">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {item.ledger.map((l) => (
+                  <tr key={l.id} className="border-b border-[#1c2029]">
+                    <td className="px-5 py-2 text-slate-400 text-xs">{l.date}</td>
+                    <td className="px-5 py-2">
+                      <span
+                        className={`text-[11px] px-2 py-0.5 rounded-full border ${
+                          l.type === "GRN"
+                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                            : l.type === "DAMAGE"
+                            ? "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                            : "border-sky-500/30 bg-sky-500/10 text-sky-400"
+                        }`}
+                      >
+                        {l.type}
+                      </span>
+                    </td>
+                    <td className="px-5 py-2 text-slate-300 text-xs">{l.note || "-"}</td>
+                    <td className="px-5 py-2 text-right text-emerald-400">{l.type === "GRN" ? fmt(l.quantity) : ""}</td>
+                    <td className="px-5 py-2 text-right text-rose-400">{l.type !== "GRN" ? fmt(l.quantity) : ""}</td>
+                    <td className="px-5 py-2 text-right font-semibold text-white">{fmt(l.balance)} {item.uom}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

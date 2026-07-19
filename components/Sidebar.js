@@ -8,6 +8,7 @@ const NAV = [
   { label: "Master Catalogue", href: "/#catalogue" },
   { label: "Movement Reports", href: "/movement" },
   { label: "Item Reports", href: "/reports" },
+  { label: "Bin Cards", href: "/bincards" },
   { label: "Inventory Thilafushi", href: "/inventory" },
 ];
 
