@@ -21,6 +21,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
   const [category, setCategory] = useState("All");
   const [sortBy, setSortBy] = useState("currentStock");
   const [sortDir, setSortDir] = useState("desc");
+  const [quickFilter, setQuickFilter] = useState(null); // null | "critical" | "reorder" | "zero"
 
   // Base rows: real physical stock (currentStock, as of STOCK_AS_OF) + the
   // selected month's movement (opening/added/usage/closing) for history.
@@ -54,6 +55,13 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     let list = categoryFiltered;
+    if (quickFilter === "critical") {
+      list = list.filter((r) => r.runoutDays != null && r.runoutDays <= 15);
+    } else if (quickFilter === "reorder") {
+      list = list.filter((r) => r.runoutDays != null && r.runoutDays > 15 && r.runoutDays <= 30);
+    } else if (quickFilter === "zero") {
+      list = list.filter((r) => r.currentStock === 0);
+    }
     if (q) {
       list = list.filter(
         (r) =>
@@ -72,7 +80,18 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
       if (va > vb) return sortDir === "asc" ? 1 : -1;
       return 0;
     });
-  }, [categoryFiltered, search, sortBy, sortDir]);
+  }, [categoryFiltered, search, sortBy, sortDir, quickFilter]);
+
+  function toggleQuickFilter(key) {
+    setQuickFilter((prev) => (prev === key ? null : key));
+    document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const QUICK_FILTER_LABELS = {
+    critical: "Critical Stock-outs (run-out within 15 days)",
+    reorder: "Reorder Now (run-out in 16–30 days)",
+    zero: "Zero Stock Lines (currently at 0 balance)",
+  };
 
   function toggleSort(col) {
     if (sortBy === col) setSortDir(sortDir === "asc" ? "desc" : "asc");
@@ -178,11 +197,14 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-        <StatCard icon={Package} label="TRACKED ITEMS" value={totalItems} sub="Live balance" />
-        <StatCard icon={AlertTriangle} label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" />
-        <StatCard icon={Clock} label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="amber" />
-        <StatCard icon={Archive} label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" />
-        <div className="bg-[#12151c] border border-[#232733] rounded-xl p-3">
+        <StatCard icon={Package} label="TRACKED ITEMS" value={totalItems} sub="Live balance — click to clear filter" onClick={() => toggleQuickFilter(null)} active={quickFilter === null} />
+        <StatCard icon={AlertTriangle} label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" onClick={() => toggleQuickFilter("critical")} active={quickFilter === "critical"} />
+        <StatCard icon={Clock} label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="amber" onClick={() => toggleQuickFilter("reorder")} active={quickFilter === "reorder"} />
+        <StatCard icon={Archive} label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" onClick={() => toggleQuickFilter("zero")} active={quickFilter === "zero"} />
+        <Link
+          href={nextReorderItem ? `/item/${nextReorderItem.id}` : "#"}
+          className="bg-[#12151c] border border-[#232733] rounded-xl p-3 hover:border-slate-500 transition block"
+        >
           <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500">
             <CalendarClock className="w-3.5 h-3.5" /> Next Reorder Due
           </div>
@@ -198,7 +220,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
           ) : (
             <div className="text-sm text-slate-500 mt-2">No data</div>
           )}
-        </div>
+        </Link>
       </div>
 
       {/* Bulk commodities + donut */}
@@ -286,11 +308,23 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
 
       {/* Item table */}
       <div id="catalogue" className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between flex-wrap gap-2">
           <h3 className="text-sm font-medium text-slate-300">
-            Master catalogue — current stock, with {MONTH_LABELS[month]} 2026 movement
+            {quickFilter
+              ? QUICK_FILTER_LABELS[quickFilter]
+              : `Master catalogue — current stock, with ${MONTH_LABELS[month]} 2026 movement`}
           </h3>
-          <span className="text-[11px] text-slate-500">{filtered.length} of {items.length} items</span>
+          <div className="flex items-center gap-2">
+            {quickFilter && (
+              <button
+                onClick={() => setQuickFilter(null)}
+                className="text-[11px] text-amber-400 hover:underline"
+              >
+                Clear filter ✕
+              </button>
+            )}
+            <span className="text-[11px] text-slate-500">{filtered.length} of {items.length} items</span>
+          </div>
         </div>
         <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
           <table className="w-full text-sm">
@@ -336,7 +370,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
   );
 }
 
-function StatCard({ icon: Icon, label, value, sub, accent = "default" }) {
+function StatCard({ icon: Icon, label, value, sub, accent = "default", onClick, active }) {
   const accentClass = {
     default: "text-white",
     rose: "text-rose-400",
@@ -345,12 +379,18 @@ function StatCard({ icon: Icon, label, value, sub, accent = "default" }) {
   }[accent];
 
   return (
-    <div className="bg-[#12151c] border border-[#232733] rounded-xl p-3">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`text-left bg-[#12151c] border rounded-xl p-3 transition hover:border-slate-500 ${
+        active ? "border-amber-500/60 ring-1 ring-amber-500/30" : "border-[#232733]"
+      }`}
+    >
       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500">
         {Icon && <Icon className="w-3.5 h-3.5" />} {label}
       </div>
       <div className={`text-2xl font-semibold mt-1.5 ${accentClass}`}>{fmt(value)}</div>
       <div className="text-[11px] text-slate-500 mt-0.5">{sub}</div>
-    </div>
+    </button>
   );
 }
