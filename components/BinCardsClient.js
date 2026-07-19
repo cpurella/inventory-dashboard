@@ -48,7 +48,7 @@ export default function BinCardsClient({ items, categories }) {
             onClick={() => setCategory(c)}
             className={`text-xs px-3 py-1.5 rounded-full border transition ${
               category === c
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-400"
+                ? "border-teal-500/50 bg-teal-500/10 text-teal-400"
                 : "border-[#232733] text-slate-400 hover:bg-white/5"
             }`}
           >
@@ -65,7 +65,7 @@ export default function BinCardsClient({ items, categories }) {
           placeholder={`Find in ${category}...`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+          className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
         />
       </div>
 
@@ -88,7 +88,7 @@ export default function BinCardsClient({ items, categories }) {
                   {it.code} · Current: {fmt(it.currentStock)} {it.uom}
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 text-amber-400 text-xs shrink-0 ml-3">
+              <div className="flex items-center gap-1.5 text-teal-400 text-xs shrink-0 ml-3">
                 <BookOpen className="w-3.5 h-3.5" /> Bin Card
               </div>
             </Link>

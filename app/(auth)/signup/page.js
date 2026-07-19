@@ -45,7 +45,7 @@ export default function SignupPage() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50"
+            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
             placeholder="Purella Chandra Shekhar"
           />
         </div>
@@ -56,7 +56,7 @@ export default function SignupPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50"
+            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
             placeholder="you@example.com"
           />
         </div>
@@ -68,7 +68,7 @@ export default function SignupPage() {
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50"
+            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
             placeholder="At least 6 characters"
           />
         </div>
@@ -80,7 +80,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full flex items-center justify-center gap-2 bg-amber-500 text-black text-sm font-medium px-4 py-2 rounded-md hover:bg-amber-400 disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 bg-teal-500 text-black text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 disabled:opacity-50"
         >
           <UserPlus className="w-4 h-4" />
           {busy ? "Creating account..." : "Create account"}
@@ -89,7 +89,7 @@ export default function SignupPage() {
 
       <div className="text-center text-sm text-slate-500">
         Already have an account?{" "}
-        <Link href="/login" className="text-amber-400 hover:underline">
+        <Link href="/login" className="text-teal-400 hover:underline">
           Sign in
         </Link>
       </div>

@@ -17,14 +17,14 @@ export default async function ItemPage({ params }) {
     return (
       <div className="bg-[#12151c] border border-[#232733] rounded-xl p-8 text-center text-slate-300">
         <p className="text-slate-500 mb-3">Item not found.</p>
-        <Link href="/" className="text-amber-400 hover:underline">← Back to dashboard</Link>
+        <Link href="/" className="text-teal-400 hover:underline">← Back to dashboard</Link>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 text-slate-200">
-      <Link href="/" className="text-sm text-amber-400 hover:underline">← Back to dashboard</Link>
+      <Link href="/" className="text-sm text-teal-400 hover:underline">← Back to dashboard</Link>
 
       <div className="bg-[#12151c] border border-[#232733] rounded-xl p-6">
         <div className="text-xs font-mono text-slate-500">Code: {item.code}</div>
@@ -51,7 +51,7 @@ export default async function ItemPage({ params }) {
           </div>
           <div>
             <div className="text-xs text-slate-500">Run-out in</div>
-            <div className="text-lg font-semibold text-amber-400">
+            <div className="text-lg font-semibold text-teal-400">
               {item.runoutDays != null ? `${fmt(item.runoutDays)} days` : "-"}
             </div>
             {item.runoutDate && <div className="text-xs text-slate-500">({item.runoutDate})</div>}
@@ -100,7 +100,7 @@ export default async function ItemPage({ params }) {
         {item.ledger.length === 0 ? (
           <div className="p-8 text-center text-slate-500 text-sm">
             No individual transactions recorded for this item yet. Log one in{" "}
-            <Link href="/inventory" className="text-amber-400 hover:underline">Inventory Thilafushi</Link>,
+            <Link href="/inventory" className="text-teal-400 hover:underline">Inventory Thilafushi</Link>,
             or import bin-card history from the admin menu.
           </div>
         ) : (

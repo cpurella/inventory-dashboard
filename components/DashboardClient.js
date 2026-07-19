@@ -13,7 +13,7 @@ function fmt(n) {
   return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
-const DONUT_COLORS = ["#f59e0b", "#38bdf8", "#a78bfa", "#34d399", "#f472b6", "#fb923c", "#94a3b8", "#4ade80"];
+const DONUT_COLORS = ["#14b8a6", "#38bdf8", "#a78bfa", "#34d399", "#f472b6", "#fb923c", "#94a3b8", "#4ade80"];
 
 export default function DashboardClient({ items, categories, defaultMonth }) {
   const [month, setMonth] = useState(defaultMonth);
@@ -168,7 +168,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
             placeholder="Find code or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+            className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -199,7 +199,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <StatCard icon={Package} label="TRACKED ITEMS" value={totalItems} sub="Live balance — click to clear filter" onClick={() => toggleQuickFilter(null)} active={quickFilter === null} />
         <StatCard icon={AlertTriangle} label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" onClick={() => toggleQuickFilter("critical")} active={quickFilter === "critical"} />
-        <StatCard icon={Clock} label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="amber" onClick={() => toggleQuickFilter("reorder")} active={quickFilter === "reorder"} />
+        <StatCard icon={Clock} label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="teal" onClick={() => toggleQuickFilter("reorder")} active={quickFilter === "reorder"} />
         <StatCard icon={Archive} label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" onClick={() => toggleQuickFilter("zero")} active={quickFilter === "zero"} />
         <Link
           href={nextReorderItem ? `/item/${nextReorderItem.id}` : "#"}
@@ -213,7 +213,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
               <div className="text-sm font-semibold text-white mt-1.5 truncate" title={nextReorderItem.description}>
                 {nextReorderItem.description}
               </div>
-              <div className="text-[11px] text-amber-400 mt-0.5">
+              <div className="text-[11px] text-teal-400 mt-0.5">
                 {nextReorderItem.runoutDate} · {fmt(nextReorderItem.runoutDays)} days
               </div>
             </>
@@ -238,7 +238,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
             {bulkCommodities.map((c) => (
               <div key={c.id} className="border border-[#232733] rounded-lg p-3 bg-[#0e1117]">
                 <div className="flex items-center justify-between mb-1.5">
-                  <div className="w-7 h-7 rounded bg-amber-500/15 text-amber-400 flex items-center justify-center text-[10px] font-bold">
+                  <div className="w-7 h-7 rounded bg-teal-500/15 text-teal-400 flex items-center justify-center text-[10px] font-bold">
                     {c.uom.trim().slice(0, 2)}
                   </div>
                   <span className="text-[9px] uppercase tracking-wide text-slate-500">{c.category}</span>
@@ -318,7 +318,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
             {quickFilter && (
               <button
                 onClick={() => setQuickFilter(null)}
-                className="text-[11px] text-amber-400 hover:underline"
+                className="text-[11px] text-teal-400 hover:underline"
               >
                 Clear filter ✕
               </button>
@@ -346,7 +346,7 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
                 <tr key={r.id} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
                   <td className="px-4 py-2 font-mono text-xs text-slate-400">{r.code}</td>
                   <td className="px-4 py-2">
-                    <Link href={`/item/${r.id}`} className="text-amber-400 hover:text-amber-300 hover:underline font-medium">
+                    <Link href={`/item/${r.id}`} className="text-teal-400 hover:text-teal-300 hover:underline font-medium">
                       {r.description}
                     </Link>
                   </td>
@@ -374,7 +374,7 @@ function StatCard({ icon: Icon, label, value, sub, accent = "default", onClick, 
   const accentClass = {
     default: "text-white",
     rose: "text-rose-400",
-    amber: "text-amber-400",
+    teal: "text-teal-400",
     slate: "text-slate-300",
   }[accent];
 
@@ -383,7 +383,7 @@ function StatCard({ icon: Icon, label, value, sub, accent = "default", onClick, 
       type="button"
       onClick={onClick}
       className={`text-left bg-[#12151c] border rounded-xl p-3 transition hover:border-slate-500 ${
-        active ? "border-amber-500/60 ring-1 ring-amber-500/30" : "border-[#232733]"
+        active ? "border-teal-500/60 ring-1 ring-teal-500/30" : "border-[#232733]"
       }`}
     >
       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500">

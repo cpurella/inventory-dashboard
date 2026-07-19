@@ -71,7 +71,7 @@ export default function ReportsClient({ items }) {
           placeholder="Type item code or name..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+          className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
         />
         {matches.length > 0 && (
           <div className="absolute z-20 mt-1 w-full bg-[#12151c] border border-[#232733] rounded-md shadow-lg max-h-72 overflow-y-auto">
@@ -101,7 +101,7 @@ export default function ReportsClient({ items }) {
           <div className="flex flex-wrap gap-2 print:hidden">
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 bg-amber-500 text-black text-sm font-medium px-3 py-1.5 rounded-md hover:bg-amber-400"
+              className="flex items-center gap-1.5 bg-teal-500 text-black text-sm font-medium px-3 py-1.5 rounded-md hover:bg-teal-400"
             >
               <Printer className="w-4 h-4" /> Print / Save as PDF
             </button>
@@ -129,7 +129,7 @@ export default function ReportsClient({ items }) {
                 label="Run-out in"
                 value={selected.runoutDays != null ? `${fmt(selected.runoutDays)} days` : "-"}
                 note={selected.runoutDate || ""}
-                valueClass="text-amber-400 print:text-black"
+                valueClass="text-teal-400 print:text-black"
               />
             </div>
           </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { prisma } from "@/lib/prisma";
 import { MONTH_KEYS } from "@/lib/constants";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -178,6 +179,17 @@ export async function POST(request) {
     }
 
     const untouched = Math.max(0, existingItems.length - parsedItems.length);
+
+    const user = await getCurrentUser().catch(() => null);
+    await prisma.uploadLog.create({
+      data: {
+        filename: file.name || "uploaded-file.xlsx",
+        uploadedByName: user?.name || null,
+        itemsUpdated: updatedCount,
+        itemsAdded: addedCount,
+        itemsUntouched: untouched,
+      },
+    });
 
     return NextResponse.json({
       ok: true,

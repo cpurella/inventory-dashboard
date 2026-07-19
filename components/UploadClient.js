@@ -74,7 +74,7 @@ export default function UploadClient() {
         }}
         onClick={() => inputRef.current?.click()}
         className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition ${
-          dragOver ? "border-amber-500/50 bg-amber-500/5" : "border-[#232733] hover:border-[#333]"
+          dragOver ? "border-teal-500/50 bg-teal-500/5" : "border-[#232733] hover:border-[#333]"
         }`}
       >
         <input
@@ -113,7 +113,7 @@ export default function UploadClient() {
       <button
         onClick={handleUpload}
         disabled={!file || !understood || busy}
-        className="bg-amber-500 text-black text-sm font-medium px-4 py-2 rounded-md hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="bg-teal-500 text-black text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {busy ? "Uploading & merging..." : "Upload & Merge Data"}
       </button>

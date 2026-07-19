@@ -15,6 +15,16 @@ model User {
   createdAt    DateTime @default(now())
 }
 
+model UploadLog {
+  id             Int      @id @default(autoincrement())
+  filename       String
+  uploadedByName String?
+  itemsUpdated   Int      @default(0)
+  itemsAdded     Int      @default(0)
+  itemsUntouched Int      @default(0)
+  createdAt      DateTime @default(now())
+}
+
 model Item {
   id           Int      @id @default(autoincrement())
   seedIndex    Int?     @unique // stable row position from the source file, used to merge re-uploads

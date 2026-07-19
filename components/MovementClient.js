@@ -84,7 +84,7 @@ export default function MovementClient({ items, categories, defaultMonth }) {
           placeholder="Find code or description..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-80 bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+          className="w-full md:w-80 bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
         />
         <div className="flex items-center gap-2 flex-wrap">
           <label className="text-xs uppercase tracking-wide text-slate-500">Category</label>
@@ -136,7 +136,7 @@ export default function MovementClient({ items, categories, defaultMonth }) {
                 <tr key={r.id} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
                   <td className="px-4 py-2 font-mono text-xs text-slate-400">{r.code}</td>
                   <td className="px-4 py-2">
-                    <Link href={`/item/${r.id}`} className="text-amber-400 hover:text-amber-300 hover:underline font-medium">
+                    <Link href={`/item/${r.id}`} className="text-teal-400 hover:text-teal-300 hover:underline font-medium">
                       {r.description} →
                     </Link>
                   </td>

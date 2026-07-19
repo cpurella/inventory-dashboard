@@ -25,7 +25,7 @@ export default function ItemChart({ months }) {
           <Legend wrapperStyle={{ fontSize: 12, color: "#94a3b8" }} />
           <Bar dataKey="Added" fill="#34d399" barSize={18} />
           <Bar dataKey="Usage" fill="#fb7185" barSize={18} />
-          <Line type="monotone" dataKey="Closing" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} />
+          <Line type="monotone" dataKey="Closing" stroke="#14b8a6" strokeWidth={2} dot={{ r: 3 }} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

@@ -222,7 +222,7 @@ export default function InventoryEntryClient({ initialRecent }) {
               <button
                 type="button"
                 onClick={() => setSelectedItem(null)}
-                className="text-xs text-amber-400 hover:underline"
+                className="text-xs text-teal-400 hover:underline"
               >
                 Change
               </button>
@@ -235,7 +235,7 @@ export default function InventoryEntryClient({ initialRecent }) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Type item code or name to search..."
-                className="w-full bg-[#0e1117] border border-[#232733] rounded-md pl-9 pr-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+                className="w-full bg-[#0e1117] border border-[#232733] rounded-md pl-9 pr-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
               />
               {matches.length > 0 && (
                 <div className="absolute z-20 mt-1 w-full bg-[#12151c] border border-[#232733] rounded-md shadow-lg max-h-64 overflow-y-auto">
@@ -269,7 +269,7 @@ export default function InventoryEntryClient({ initialRecent }) {
               step="any"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-amber-500/50"
+              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
               placeholder="0"
             />
           </div>
@@ -281,7 +281,7 @@ export default function InventoryEntryClient({ initialRecent }) {
               min="2026-01-01"
               max="2026-12-31"
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm [color-scheme:dark] focus:outline-none focus:border-amber-500/50"
+              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm [color-scheme:dark] focus:outline-none focus:border-teal-500/50"
             />
           </div>
           <div>
@@ -291,7 +291,7 @@ export default function InventoryEntryClient({ initialRecent }) {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder={activeTab === "DAMAGE" ? "Reason for damage/spoilage..." : "e.g. supplier / job reference"}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-amber-500/50"
+              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
             />
           </div>
         </div>
@@ -412,7 +412,7 @@ export default function InventoryEntryClient({ initialRecent }) {
                             type="button"
                             disabled={busy}
                             onClick={() => startEdit(r)}
-                            className="text-slate-400 hover:text-amber-400 disabled:opacity-50"
+                            className="text-slate-400 hover:text-teal-400 disabled:opacity-50"
                             title="Edit"
                           >
                             <Pencil className="w-4 h-4" />
