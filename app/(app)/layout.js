@@ -1,0 +1,35 @@
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import Sidebar from "@/components/Sidebar";
+import LogoutButton from "@/components/LogoutButton";
+
+export default async function AppLayout({ children }) {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/login");
+  }
+
+  return (
+    <div className="min-h-screen flex bg-[#0b0e14]">
+      <Sidebar />
+      <div className="flex-1 min-w-0">
+        <header className="px-4 md:px-6 py-3 border-b border-[#1c2029] flex items-center justify-between">
+          <div>
+            <div className="text-[11px] uppercase tracking-wider text-slate-500">
+              Control / Dashboard
+            </div>
+            <h1 className="text-lg font-semibold text-white">Operations Dashboard</h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <div className="text-sm text-white">Welcome, {user.name}</div>
+              <div className="text-[11px] text-slate-500">{user.email}</div>
+            </div>
+            <LogoutButton />
+          </div>
+        </header>
+        <main className="p-4 md:p-6 max-w-7xl mx-auto">{children}</main>
+      </div>
+    </div>
+  );
+}
