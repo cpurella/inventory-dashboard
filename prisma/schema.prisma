@@ -64,6 +64,7 @@ model Transaction {
   quantity  Float
   date      DateTime
   note      String?
+  source    String   @default("manual") // "manual" | "historical-import"
   createdAt DateTime @default(now())
 
   @@index([itemId])

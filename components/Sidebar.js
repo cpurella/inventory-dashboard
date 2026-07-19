@@ -62,6 +62,12 @@ export default function Sidebar() {
         Upload inventory file
       </Link>
       <Link
+        href="/admin/import-history"
+        className="text-[11px] text-slate-600 hover:text-slate-400 px-2 mt-2"
+      >
+        Import bin card history
+      </Link>
+      <Link
         href="/admin/seed"
         className="text-[11px] text-slate-600 hover:text-slate-400 px-2 mt-2"
       >
