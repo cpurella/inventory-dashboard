@@ -285,6 +285,8 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
                   </Pie>
                   <Tooltip
                     contentStyle={{ background: "#12151c", border: "1px solid #232733", borderRadius: 8, fontSize: 12 }}
+                    labelStyle={{ color: "#e5e7eb" }}
+                    itemStyle={{ color: "#e5e7eb" }}
                     formatter={(value, name) => [fmt(value), name]}
                   />
                 </PieChart>

@@ -21,7 +21,12 @@ export default function ItemChart({ months }) {
           <CartesianGrid strokeDasharray="3 3" stroke="#232733" />
           <XAxis dataKey="name" fontSize={12} stroke="#64748b" />
           <YAxis fontSize={12} stroke="#64748b" />
-          <Tooltip contentStyle={{ background: "#12151c", border: "1px solid #232733", borderRadius: 8, fontSize: 12 }} />
+          <Tooltip
+            contentStyle={{ background: "#12151c", border: "1px solid #232733", borderRadius: 8, fontSize: 12, color: "#e5e7eb" }}
+            labelStyle={{ color: "#e5e7eb", fontWeight: 600, marginBottom: 4 }}
+            itemStyle={{ color: "#e5e7eb" }}
+            cursor={{ fill: "rgba(255,255,255,0.04)" }}
+          />
           <Legend wrapperStyle={{ fontSize: 12, color: "#94a3b8" }} />
           <Bar dataKey="Added" fill="#34d399" barSize={18} />
           <Bar dataKey="Usage" fill="#fb7185" barSize={18} />

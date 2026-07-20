@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, ListTree, TrendingUp, FileText, BookOpen, ClipboardList, Boxes,
+  LayoutDashboard, ListTree, TrendingUp, FileText, BookOpen, ClipboardList, Boxes, PlusCircle,
 } from "lucide-react";
 
 const NAV = [
@@ -13,6 +13,7 @@ const NAV = [
   { label: "Item Reports", href: "/reports", icon: FileText },
   { label: "Bin Cards", href: "/bincards", icon: BookOpen },
   { label: "Inventory Thilafushi", href: "/inventory", icon: ClipboardList },
+  { label: "Add New Item", href: "/items/new", icon: PlusCircle },
 ];
 
 export default function Sidebar() {
