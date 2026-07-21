@@ -110,6 +110,7 @@ export default async function ItemPage({ params }) {
                 <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
                   <th className="px-5 py-2.5">Date</th>
                   <th className="px-5 py-2.5">Type</th>
+                  <th className="px-5 py-2.5">Location</th>
                   <th className="px-5 py-2.5">Reference / Customer</th>
                   <th className="px-5 py-2.5 text-right">In</th>
                   <th className="px-5 py-2.5 text-right">Out</th>
@@ -117,28 +118,48 @@ export default async function ItemPage({ params }) {
                 </tr>
               </thead>
               <tbody>
-                {item.ledger.map((l) => (
-                  <tr key={l.id} className="border-b border-[#1c2029]">
-                    <td className="px-5 py-2 text-slate-400 text-xs">{l.date}</td>
-                    <td className="px-5 py-2">
-                      <span
-                        className={`text-[11px] px-2 py-0.5 rounded-full border ${
-                          l.type === "GRN"
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                            : l.type === "DAMAGE"
-                            ? "border-rose-500/30 bg-rose-500/10 text-rose-400"
-                            : "border-sky-500/30 bg-sky-500/10 text-sky-400"
-                        }`}
-                      >
-                        {l.type}
-                      </span>
-                    </td>
-                    <td className="px-5 py-2 text-slate-300 text-xs">{l.note || "-"}</td>
-                    <td className="px-5 py-2 text-right text-emerald-400">{l.type === "GRN" ? fmt(l.quantity) : ""}</td>
-                    <td className="px-5 py-2 text-right text-rose-400">{l.type !== "GRN" ? fmt(l.quantity) : ""}</td>
-                    <td className="px-5 py-2 text-right font-semibold text-white">{fmt(l.balance)} {item.uom}</td>
-                  </tr>
-                ))}
+                {item.ledger.map((l) => {
+                  const locMatch = l.note ? l.note.match(/^\[(.+?)\]\s*(.*)$/) : null;
+                  const location = locMatch ? locMatch[1] : null;
+                  const noteText = locMatch ? locMatch[2] : l.note;
+                  return (
+                    <tr key={l.id} className="border-b border-[#1c2029]">
+                      <td className="px-5 py-2 text-slate-400 text-xs">{l.date}</td>
+                      <td className="px-5 py-2">
+                        <span
+                          className={`text-[11px] px-2 py-0.5 rounded-full border ${
+                            l.type === "GRN"
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                              : l.type === "DAMAGE"
+                              ? "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                              : "border-sky-500/30 bg-sky-500/10 text-sky-400"
+                          }`}
+                        >
+                          {l.type}
+                        </span>
+                      </td>
+                      <td className="px-5 py-2">
+                        {location ? (
+                          <span
+                            className={`text-[11px] px-2 py-0.5 rounded-full border ${
+                              location === "Thilafushi"
+                                ? "border-teal-500/30 bg-teal-500/10 text-teal-400"
+                                : "border-violet-500/30 bg-violet-500/10 text-violet-400"
+                            }`}
+                          >
+                            {location}
+                          </span>
+                        ) : (
+                          <span className="text-slate-600 text-xs">-</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-2 text-slate-300 text-xs">{noteText || "-"}</td>
+                      <td className="px-5 py-2 text-right text-emerald-400">{l.type === "GRN" ? fmt(l.quantity) : ""}</td>
+                      <td className="px-5 py-2 text-right text-rose-400">{l.type !== "GRN" ? fmt(l.quantity) : ""}</td>
+                      <td className="px-5 py-2 text-right font-semibold text-white">{fmt(l.balance)} {item.uom}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
