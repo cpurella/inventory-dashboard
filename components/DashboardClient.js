@@ -15,7 +15,7 @@ function fmt(n) {
 
 const DONUT_COLORS = ["#14b8a6", "#38bdf8", "#a78bfa", "#34d399", "#f472b6", "#fb923c", "#94a3b8", "#4ade80"];
 
-export default function DashboardClient({ items, categories, defaultMonth }) {
+export default function DashboardClient({ items, categories, defaultMonth, locationBreakdown }) {
   const [month, setMonth] = useState(defaultMonth);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -307,6 +307,48 @@ export default function DashboardClient({ items, categories, defaultMonth }) {
           </div>
         </div>
       </div>
+
+      {/* Sand & Aggregate — by location */}
+      {locationBreakdown && (locationBreakdown.Thilafushi.received + locationBreakdown.Thilafushi.issued + locationBreakdown.Mamigili.received + locationBreakdown.Mamigili.issued > 0) && (
+        <div className="bg-[#12151c] border border-[#232733] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-1">
+            <h3 className="text-sm font-medium text-slate-300">Sand &amp; Aggregate — by location</h3>
+            <span className="text-[11px] text-slate-500">Total received/issued from bin-card history — not a per-location balance</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="border border-teal-500/20 bg-teal-500/5 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-teal-400 mb-2">
+                <span className="w-2 h-2 rounded-full bg-teal-400 inline-block" /> Thilafushi
+              </div>
+              <div className="flex gap-6">
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase">Received</div>
+                  <div className="text-lg font-semibold text-emerald-400">{fmt(locationBreakdown.Thilafushi.received)}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase">Issued</div>
+                  <div className="text-lg font-semibold text-rose-400">{fmt(locationBreakdown.Thilafushi.issued)}</div>
+                </div>
+              </div>
+            </div>
+            <div className="border border-violet-500/20 bg-violet-500/5 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-violet-400 mb-2">
+                <span className="w-2 h-2 rounded-full bg-violet-400 inline-block" /> Mamigili
+              </div>
+              <div className="flex gap-6">
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase">Received</div>
+                  <div className="text-lg font-semibold text-emerald-400">{fmt(locationBreakdown.Mamigili.received)}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase">Issued</div>
+                  <div className="text-lg font-semibold text-rose-400">{fmt(locationBreakdown.Mamigili.issued)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Item table */}
       <div id="catalogue" className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
