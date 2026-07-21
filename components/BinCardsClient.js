@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, BookOpen } from "lucide-react";
+import { Search, BookOpen, Download } from "lucide-react";
 
 function fmt(n) {
   if (n === null || n === undefined) return "-";
@@ -71,9 +71,17 @@ export default function BinCardsClient({ items, categories }) {
 
       {/* Item list for the selected category */}
       <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between gap-2 flex-wrap">
           <h3 className="text-sm font-medium text-slate-300">{category}</h3>
-          <span className="text-[11px] text-slate-500">{filtered.length} items</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500">{filtered.length} items</span>
+            <a
+              href={`/api/bincards/export?category=${encodeURIComponent(category)}`}
+              className="flex items-center gap-1.5 text-[11px] text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 rounded-md"
+            >
+              <Download className="w-3 h-3" /> Download {category} as Excel
+            </a>
+          </div>
         </div>
         <div className="max-h-[600px] overflow-y-auto divide-y divide-[#1c2029]">
           {filtered.map((it) => (

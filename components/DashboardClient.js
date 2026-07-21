@@ -236,7 +236,11 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {bulkCommodities.map((c) => (
-              <div key={c.id} className="border border-[#232733] rounded-lg p-3 bg-[#0e1117]">
+              <Link
+                key={c.id}
+                href={`/item/${c.id}`}
+                className="block border border-[#232733] rounded-lg p-3 bg-[#0e1117] hover:border-teal-500/40 hover:bg-[#12161f] transition cursor-pointer"
+              >
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="w-7 h-7 rounded bg-teal-500/15 text-teal-400 flex items-center justify-center text-[10px] font-bold">
                     {c.uom.trim().slice(0, 2)}
@@ -252,7 +256,7 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
                 <div className="text-[11px] text-slate-500 mt-1">
                   {c.runoutDays != null ? `${fmt(c.runoutDays)}d left · reorder ${c.runoutDate}` : "no draw data"}
                 </div>
-              </div>
+              </Link>
             ))}
             {bulkCommodities.length === 0 && (
               <div className="col-span-4 text-sm text-slate-500 py-6 text-center">
