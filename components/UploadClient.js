@@ -1,7 +1,96 @@
 "use client";
 
 import { useRef, useState } from "react";
+import * as XLSX from "xlsx";
 import { UploadCloud, FileSpreadsheet } from "lucide-react";
+import { MONTH_KEYS } from "@/lib/constants";
+
+function round2(n) {
+  return typeof n === "number" && !Number.isNaN(n) ? Math.round(n * 100) / 100 : 0;
+}
+
+// Runs entirely in the browser -- reads the .xlsx and extracts just the item
+// rows as compact JSON, so only a small payload (not the whole file) ever
+// has to travel to the server. This is what avoids Vercel's request body
+// size limit on larger workbooks.
+function parseWorkbook(arrayBuffer) {
+  const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
+
+  const phySheetName = workbook.SheetNames.find((n) =>
+    n.toLowerCase().replace(/\s/g, "").includes("phy-inventory") ||
+    n.toLowerCase().replace(/\s/g, "").includes("phyinventory")
+  );
+  const mvmtSheetName = workbook.SheetNames.find((n) =>
+    n.toLowerCase().includes("mvmnt") || n.toLowerCase().includes("movement")
+  );
+
+  if (!phySheetName || !mvmtSheetName) {
+    throw new Error(
+      `Could not find the expected sheets in this file. Sheets found: ${workbook.SheetNames.join(", ")}. Expected one sheet with "PHY-Inventory-List" and one with "MVMNT" in the name.`
+    );
+  }
+
+  const phy = XLSX.utils.sheet_to_json(workbook.Sheets[phySheetName], { header: 1, raw: true, defval: null });
+  const mvmt = XLSX.utils.sheet_to_json(workbook.Sheets[mvmtSheetName], { header: 1, raw: true, defval: null });
+
+  const mvmtHeaderCell = String(mvmt[2]?.[1] || "").toLowerCase();
+  const phyHeaderCell = String(phy[5]?.[5] || "").toLowerCase();
+  if (!mvmtHeaderCell.includes("code")) {
+    throw new Error(
+      `The movement sheet's layout looks different than expected (header row 3, column B should say "Code"). Found: "${mvmt[2]?.[1] ?? ""}".`
+    );
+  }
+  if (!phyHeaderCell.includes("description")) {
+    throw new Error(
+      `The PHY inventory sheet's layout looks different than expected (header row 6, column F should say "Item Description"). Found: "${phy[5]?.[5] ?? ""}".`
+    );
+  }
+
+  const parsedItems = [];
+  for (let i = 0; i < 5000; i++) {
+    const phyRow = phy[6 + i];
+    const mvmtRow = mvmt[3 + i];
+    if (!mvmtRow || mvmtRow[1] == null || mvmtRow[1] === "") break;
+
+    const code = mvmtRow[1];
+    const description = mvmtRow[2];
+    const uom = mvmtRow[4];
+
+    const category = (phyRow && phyRow[4]) || "Uncategorized";
+    const packingSize = phyRow ? phyRow[6] : null;
+    const discontinued = phyRow ? !!phyRow[14] : false;
+
+    const months = [];
+    for (let m = 0; m < 12; m++) {
+      const col = 5 + 4 * m;
+      months.push({
+        month: MONTH_KEYS[m],
+        opening: round2(mvmtRow[col]),
+        added: round2(mvmtRow[col + 1]),
+        usage: round2(mvmtRow[col + 2]),
+        closing: round2(mvmtRow[col + 3]),
+      });
+    }
+
+    const avgPerDay = round2(mvmtRow[59]);
+
+    parsedItems.push({
+      code: String(code),
+      description: description || "Unnamed item",
+      category: String(category),
+      uom: uom || "NOS",
+      packingSize: packingSize != null ? String(packingSize) : null,
+      avgPerDay,
+      discontinued,
+      months,
+    });
+  }
+
+  if (parsedItems.length === 0) {
+    throw new Error("No item rows were found in this file.");
+  }
+  return parsedItems;
+}
 
 export default function UploadClient() {
   const [file, setFile] = useState(null);
@@ -22,12 +111,15 @@ export default function UploadClient() {
     setBusy(true);
     setStatus(null);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("confirm", "YES");
+      const arrayBuffer = await file.arrayBuffer();
+      const parsedItems = parseWorkbook(arrayBuffer);
 
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: file.name, parsedItems }),
+      });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Upload failed.");
 
       setStatus({
@@ -49,7 +141,8 @@ export default function UploadClient() {
         <h2 className="text-lg font-semibold text-white">Upload Inventory File</h2>
         <p className="text-sm text-slate-500 mt-1">
           Drop in an updated inventory report (same format as the original — a "PHY-Inventory-List" sheet and
-          an "Annual-Inv-MVMNT-..." sheet). The app merges it in automatically.
+          an "Annual-Inv-MVMNT-..." sheet). The file is read right here in your browser, then only the
+          extracted item data is sent to merge in — so even large files upload fine.
         </p>
       </div>
 
@@ -115,7 +208,7 @@ export default function UploadClient() {
         disabled={!file || !understood || busy}
         className="bg-teal-500 text-black text-sm font-medium px-4 py-2 rounded-md hover:bg-teal-400 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {busy ? "Uploading & merging..." : "Upload & Merge Data"}
+        {busy ? "Reading file & merging..." : "Upload & Merge Data"}
       </button>
 
       {status && (
