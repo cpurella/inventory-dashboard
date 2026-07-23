@@ -312,44 +312,48 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
         </div>
       </div>
 
-      {/* Sand & Aggregate — by location */}
-      {locationBreakdown && (locationBreakdown.Thilafushi.received + locationBreakdown.Thilafushi.issued + locationBreakdown.Mamigili.received + locationBreakdown.Mamigili.issued > 0) && (
-        <div className="bg-[#12151c] border border-[#232733] rounded-xl p-4">
-          <div className="flex items-center justify-between mb-3 flex-wrap gap-1">
+      {/* Sand & Aggregate — by location, per item */}
+      {locationBreakdown && locationBreakdown.length > 0 && (
+        <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between flex-wrap gap-1">
             <h3 className="text-sm font-medium text-slate-300">Sand &amp; Aggregate — by location</h3>
-            <span className="text-[11px] text-slate-500">Total received/issued from bin-card history — not a per-location balance</span>
+            <span className="text-[11px] text-slate-500">Received/issued totals from bin-card history — not a per-location balance</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="border border-teal-500/20 bg-teal-500/5 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 text-xs font-medium text-teal-400 mb-2">
-                <span className="w-2 h-2 rounded-full bg-teal-400 inline-block" /> Thilafushi
-              </div>
-              <div className="flex gap-6">
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Received</div>
-                  <div className="text-lg font-semibold text-emerald-400">{fmt(locationBreakdown.Thilafushi.received)}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Issued</div>
-                  <div className="text-lg font-semibold text-rose-400">{fmt(locationBreakdown.Thilafushi.issued)}</div>
-                </div>
-              </div>
-            </div>
-            <div className="border border-violet-500/20 bg-violet-500/5 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 text-xs font-medium text-violet-400 mb-2">
-                <span className="w-2 h-2 rounded-full bg-violet-400 inline-block" /> Mamigili
-              </div>
-              <div className="flex gap-6">
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Received</div>
-                  <div className="text-lg font-semibold text-emerald-400">{fmt(locationBreakdown.Mamigili.received)}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Issued</div>
-                  <div className="text-lg font-semibold text-rose-400">{fmt(locationBreakdown.Mamigili.issued)}</div>
-                </div>
-              </div>
-            </div>
+          <div className="overflow-x-auto max-h-80 overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-[#12151c] z-10">
+                <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
+                  <th className="px-4 py-2.5">Item</th>
+                  <th className="px-4 py-2.5 text-right">
+                    <span className="text-teal-400">Thilafushi</span> Received
+                  </th>
+                  <th className="px-4 py-2.5 text-right">
+                    <span className="text-teal-400">Thilafushi</span> Issued
+                  </th>
+                  <th className="px-4 py-2.5 text-right">
+                    <span className="text-violet-400">Mamigili</span> Received
+                  </th>
+                  <th className="px-4 py-2.5 text-right">
+                    <span className="text-violet-400">Mamigili</span> Issued
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {locationBreakdown.map((row) => (
+                  <tr key={row.itemId} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
+                    <td className="px-4 py-2">
+                      <Link href={`/item/${row.itemId}`} className="text-teal-400 hover:underline">
+                        {row.description}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Thilafushi.received)}</td>
+                    <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Thilafushi.issued)}</td>
+                    <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Mamigili.received)}</td>
+                    <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Mamigili.issued)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

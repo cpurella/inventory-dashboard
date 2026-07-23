@@ -10,6 +10,15 @@ function fmt(n) {
   return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
+function Row({ label, value, valueClass = "text-slate-300", bold = false }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-slate-400">{label}</span>
+      <span className={`${valueClass} ${bold ? "font-semibold text-white text-sm" : ""}`}>{value}</span>
+    </div>
+  );
+}
+
 export default async function ItemPage({ params }) {
   const item = await getItemById(params.id);
 
@@ -57,6 +66,29 @@ export default async function ItemPage({ params }) {
             {item.runoutDate && <div className="text-xs text-slate-500">({item.runoutDate})</div>}
           </div>
         </div>
+
+        <details className="mt-4 group">
+          <summary className="text-xs text-teal-400 cursor-pointer hover:underline list-none flex items-center gap-1">
+            <span className="inline-block transition-transform group-open:rotate-90">▸</span>
+            How is Current Stock calculated?
+          </summary>
+          <div className="mt-3 bg-[#0e1117] border border-[#232733] rounded-lg p-4 text-xs space-y-1.5">
+            <Row label="January opening balance (from file)" value={fmt(item.calculationBreakdown.janOpening)} />
+            <Row label="+ Added — from Excel/file baseline" value={fmt(item.calculationBreakdown.baselineAdded)} valueClass="text-emerald-400" />
+            <Row label="− Usage — from Excel/file baseline" value={fmt(item.calculationBreakdown.baselineUsage)} valueClass="text-rose-400" />
+            <Row label="− Damage — from Excel/file baseline" value={fmt(item.calculationBreakdown.baselineDamage)} valueClass="text-orange-400" />
+            <Row label="+ Added — logged manually (GRN)" value={fmt(item.calculationBreakdown.manualAdded)} valueClass="text-emerald-400" />
+            <Row label="− Usage — logged manually" value={fmt(item.calculationBreakdown.manualUsage)} valueClass="text-rose-400" />
+            <Row label="− Damage — logged manually" value={fmt(item.calculationBreakdown.manualDamage)} valueClass="text-orange-400" />
+            <div className="border-t border-[#232733] pt-1.5 mt-1.5">
+              <Row label="= Current Stock" value={`${fmt(item.calculationBreakdown.currentStock)} ${item.uom}`} bold />
+            </div>
+            <p className="text-[11px] text-slate-500 pt-2">
+              If this doesn't look right, check the Monthly Movement table below (file baseline) and the Bin
+              Card ledger further down (manual + historical entries) to see exactly which numbers add up to this.
+            </p>
+          </div>
+        </details>
       </div>
 
       <div className="bg-[#12151c] border border-[#232733] rounded-xl p-6">
