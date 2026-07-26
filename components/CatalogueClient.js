@@ -45,7 +45,7 @@ function downloadCsv(rows, month) {
   URL.revokeObjectURL(url);
 }
 
-export default function CatalogueClient({ items, categories, defaultMonth }) {
+export default function CatalogueClient({ items, categories, defaultMonth, canEdit = true }) {
   const searchParams = useSearchParams();
 
   const [month, setMonth] = useState(defaultMonth);
@@ -124,7 +124,7 @@ export default function CatalogueClient({ items, categories, defaultMonth }) {
           <h2 className="text-lg font-semibold text-white">Master Catalogue</h2>
           <p className="text-xs text-slate-500 mt-0.5">All tracked items, current stock, and monthly movement.</p>
         </div>
-        <AddItemButton categories={categories} />
+        {canEdit && <AddItemButton categories={categories} />}
       </div>
 
       <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
