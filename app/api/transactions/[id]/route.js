@@ -2,11 +2,17 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureSeeded } from "@/lib/ensure-seeded";
 import { MONTH_KEYS, getCurrentStock } from "@/lib/data";
+import { getCurrentUser, canEditInventory } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request, { params }) {
   try {
+    const requester = await getCurrentUser();
+    if (!canEditInventory(requester)) {
+      return NextResponse.json({ error: "You don't have permission to edit entries." }, { status: 403 });
+    }
+
     await ensureSeeded();
     const id = Number(params.id);
     const body = await request.json();
@@ -46,6 +52,11 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    const requester = await getCurrentUser();
+    if (!canEditInventory(requester)) {
+      return NextResponse.json({ error: "You don't have permission to delete entries." }, { status: 403 });
+    }
+
     await ensureSeeded();
     const id = Number(params.id);
     const existing = await prisma.transaction.findUnique({ where: { id } });

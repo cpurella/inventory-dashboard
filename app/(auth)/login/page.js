@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogIn } from "lucide-react";
 
@@ -74,11 +73,8 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="text-center text-sm text-slate-500">
-        No account yet?{" "}
-        <Link href="/signup" className="text-teal-400 hover:underline">
-          Create one
-        </Link>
+      <div className="text-center text-xs text-slate-600">
+        Need access? Ask an admin to add your account from Settings.
       </div>
     </div>
   );

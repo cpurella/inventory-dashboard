@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser, isAdmin } from "@/lib/auth";
-import UploadClient from "@/components/UploadClient";
+import UsersManagementClient from "@/components/UsersManagementClient";
 
-export default async function UploadPage() {
+export default async function UsersPage() {
   const user = await getCurrentUser();
   if (!isAdmin(user)) redirect("/settings");
-  return <UploadClient />;
+  return <UsersManagementClient currentUserId={user.id} />;
 }

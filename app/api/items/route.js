@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { MONTH_KEYS } from "@/lib/constants";
+import { getCurrentUser, canEditInventory } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
+    const requester = await getCurrentUser();
+    if (!canEditInventory(requester)) {
+      return NextResponse.json({ error: "You don't have permission to add items." }, { status: 403 });
+    }
+
     const body = await request.json();
     const { code, description, category, uom, packingSize, openingStock, avgPerDay } = body;
 

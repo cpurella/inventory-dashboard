@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureSeeded } from "@/lib/ensure-seeded";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 import historicalTransactions from "@/data/historical-transactions.json";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
+    const requester = await getCurrentUser();
+    if (!isAdmin(requester)) {
+      return NextResponse.json({ error: "Only an admin can do this." }, { status: 403 });
+    }
+
     await ensureSeeded();
     const body = await request.json().catch(() => ({}));
     if (body.confirm !== "YES") {

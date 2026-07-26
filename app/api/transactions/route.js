@@ -2,11 +2,17 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureSeeded } from "@/lib/ensure-seeded";
 import { MONTH_KEYS, getCurrentStock } from "@/lib/data";
+import { getCurrentUser, canEditInventory } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
+    const requester = await getCurrentUser();
+    if (!canEditInventory(requester)) {
+      return NextResponse.json({ error: "You don't have permission to log entries." }, { status: 403 });
+    }
+
     await ensureSeeded();
     const body = await request.json();
     const { itemId, type, quantity, date, note } = body;

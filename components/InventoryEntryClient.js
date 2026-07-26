@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, PackagePlus, PackageMinus, AlertOctagon, Check, Pencil, Trash2, X } from "lucide-react";
+import { Search, PackagePlus, PackageMinus, AlertOctagon, Check, Pencil, Trash2, X, PlusCircle } from "lucide-react";
+import Modal from "@/components/Modal";
 
 const TABS = [
   { key: "GRN", label: "Received (GRN)", icon: PackagePlus, color: "emerald" },
@@ -24,7 +25,7 @@ function fmt(n) {
   return Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
-export default function InventoryEntryClient({ initialRecent }) {
+export default function InventoryEntryClient({ initialRecent, canEdit = true }) {
   const [activeTab, setActiveTab] = useState("GRN");
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState([]);
@@ -40,6 +41,7 @@ export default function InventoryEntryClient({ initialRecent }) {
   const [editDate, setEditDate] = useState("");
   const [editNote, setEditNote] = useState("");
   const [rowBusy, setRowBusy] = useState(null);
+  const [formOpen, setFormOpen] = useState(false);
   const searchTimer = useRef(null);
 
   const tab = TABS.find((t) => t.key === activeTab);
@@ -183,32 +185,45 @@ export default function InventoryEntryClient({ initialRecent }) {
 
   return (
     <div className="space-y-4 text-slate-200">
-      <div className="text-xs text-slate-500">
-        Log items received, used, or damaged/spoiled — the dashboard balance updates immediately.
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="text-xs text-slate-500">
+          Log items received, used, or damaged/spoiled — the dashboard balance updates immediately.
+        </div>
+        {canEdit && (
+          <button
+            onClick={() => setFormOpen(true)}
+            className="flex items-center gap-1.5 text-sm bg-teal-500 text-black font-medium px-3 py-1.5 rounded-md hover:bg-teal-400"
+          >
+            <PlusCircle className="w-4 h-4" /> Add Entry
+          </button>
+        )}
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 flex-wrap">
-        {TABS.map((t) => {
-          const c = COLOR_CLASSES[t.color];
-          const Icon = t.icon;
-          const active = activeTab === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => { setActiveTab(t.key); setMessage(null); }}
-              className={`flex items-center gap-2 text-sm px-3 py-2 rounded-md border transition ${
-                active ? c.ring + " " + c.text : "border-[#232733] text-slate-400 hover:bg-white/5"
-              }`}
-            >
-              <Icon className="w-4 h-4" /> {t.label}
-            </button>
-          );
-        })}
-      </div>
+      {canEdit && (
+      <Modal open={formOpen} onClose={() => setFormOpen(false)}>
+        <div className="space-y-4">
+          {/* Tabs */}
+          <div className="flex gap-2 flex-wrap">
+            {TABS.map((t) => {
+              const c = COLOR_CLASSES[t.color];
+              const Icon = t.icon;
+              const active = activeTab === t.key;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => { setActiveTab(t.key); setMessage(null); }}
+                  className={`flex items-center gap-2 text-sm px-3 py-2 rounded-md border transition ${
+                    active ? c.ring + " " + c.text : "border-[#232733] text-slate-400 hover:bg-white/5"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" /> {t.label}
+                </button>
+              );
+            })}
+          </div>
 
-      {/* Entry form */}
-      <form onSubmit={handleSubmit} className="bg-[#12151c] border border-[#232733] rounded-xl p-5 space-y-4">
+          {/* Entry form */}
+          <form onSubmit={handleSubmit} className="bg-[#12151c] border border-[#232733] rounded-xl p-5 space-y-4">
         <div>
           <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Item</label>
           {selectedItem ? (
@@ -311,6 +326,9 @@ export default function InventoryEntryClient({ initialRecent }) {
           </div>
         )}
       </form>
+        </div>
+      </Modal>
+      )}
 
       {/* Recent entries log */}
       <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
@@ -327,7 +345,7 @@ export default function InventoryEntryClient({ initialRecent }) {
                 <th className="px-4 py-2.5">Item</th>
                 <th className="px-4 py-2.5 text-right">Quantity</th>
                 <th className="px-4 py-2.5">Note</th>
-                <th className="px-4 py-2.5 text-right">Actions</th>
+                {canEdit && <th className="px-4 py-2.5 text-right">Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -384,6 +402,7 @@ export default function InventoryEntryClient({ initialRecent }) {
                         r.note || "-"
                       )}
                     </td>
+                    {canEdit && (
                     <td className="px-4 py-2 text-right">
                       {isEditing ? (
                         <div className="flex items-center justify-end gap-2">
@@ -429,6 +448,7 @@ export default function InventoryEntryClient({ initialRecent }) {
                         </div>
                       )}
                     </td>
+                    )}
                   </tr>
                 );
               })}

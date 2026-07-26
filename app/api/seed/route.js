@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 import seedItems from "@/data/inventory.json";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
+    const requester = await getCurrentUser();
+    if (!isAdmin(requester)) {
+      return NextResponse.json({ error: "Only an admin can do this." }, { status: 403 });
+    }
+
     const body = await request.json().catch(() => ({}));
     if (body.confirm !== "YES") {
       return NextResponse.json(

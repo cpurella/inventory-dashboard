@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, isAdmin } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -11,6 +11,11 @@ export const runtime = "nodejs";
 // performs the non-destructive merge into the database.
 export async function POST(request) {
   try {
+    const requester = await getCurrentUser();
+    if (!isAdmin(requester)) {
+      return NextResponse.json({ error: "Only an admin can upload inventory files." }, { status: 403 });
+    }
+
     const body = await request.json();
     const { filename, parsedItems } = body;
 
@@ -84,7 +89,7 @@ export async function POST(request) {
 
     const untouched = Math.max(0, existingItems.length - parsedItems.length);
 
-    const user = await getCurrentUser().catch(() => null);
+    const user = requester;
     await prisma.uploadLog.create({
       data: {
         filename: filename || "uploaded-file.xlsx",
