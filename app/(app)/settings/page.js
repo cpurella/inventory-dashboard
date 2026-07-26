@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentUser, isAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { User, Users, UploadCloud, History, RotateCcw, ChevronRight } from "lucide-react";
+import ChangePasswordForm from "@/components/ChangePasswordForm";
 
 const ROLE_LABEL = {
   ADMIN: "Admin — full access",
@@ -34,6 +35,8 @@ export default async function SettingsPage() {
           Role: <span className="text-teal-400">{ROLE_LABEL[user.role] || user.role}</span>
         </div>
       </div>
+
+      <ChangePasswordForm />
 
       {isAdmin(user) && (
         <div>

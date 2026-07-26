@@ -2,11 +2,41 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { Download } from "lucide-react";
 import { MONTH_KEYS, MONTH_LABELS } from "@/lib/constants";
 
 function fmt(n) {
   if (n === null || n === undefined) return "-";
   return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
+}
+
+function downloadCsv(rows, month) {
+  const header = ["Code", "Description", "Category", "UOM", "Current Stock", "Added", "Usage", "Avg/Day", "Run-out Days", "Next Order"];
+  const lines = [header.join(",")];
+  for (const r of rows) {
+    lines.push([
+      r.code,
+      `"${(r.description || "").replace(/"/g, '""')}"`,
+      r.category,
+      r.uom,
+      r.currentStock,
+      r.added,
+      r.usage,
+      r.avgPerDay,
+      r.runoutDays ?? "",
+      r.runoutDate || "",
+    ].join(","));
+  }
+  const csv = lines.join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `movement-report-${month}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 export default function MovementClient({ items, categories, defaultMonth }) {
@@ -115,7 +145,15 @@ export default function MovementClient({ items, categories, defaultMonth }) {
           <h3 className="text-sm font-medium text-slate-300">
             Movement report — {MONTH_LABELS[month]} 2026
           </h3>
-          <span className="text-[11px] text-slate-500">{filtered.length} of {items.length} items</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500">{filtered.length} of {items.length} items</span>
+            <button
+              onClick={() => downloadCsv(filtered, month)}
+              className="flex items-center gap-1.5 text-[11px] text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 rounded-md"
+            >
+              <Download className="w-3 h-3" /> Download CSV
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
           <table className="w-full text-sm">

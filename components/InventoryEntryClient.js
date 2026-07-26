@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search, PackagePlus, PackageMinus, AlertOctagon, Check, Pencil, Trash2, X, PlusCircle } from "lucide-react";
+import { Search, PackagePlus, PackageMinus, AlertOctagon, Check, Pencil, Trash2, X, PlusCircle, Download } from "lucide-react";
 import Modal from "@/components/Modal";
 
 const TABS = [
@@ -23,6 +23,32 @@ function todayStr() {
 function fmt(n) {
   if (n === null || n === undefined) return "-";
   return Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function downloadEntriesCsv(rows) {
+  const header = ["Date", "Type", "Code", "Item", "Quantity", "UOM", "Note"];
+  const lines = [header.join(",")];
+  for (const r of rows) {
+    lines.push([
+      r.date,
+      r.type,
+      r.code,
+      `"${(r.description || "").replace(/"/g, '""')}"`,
+      r.quantity,
+      r.uom,
+      `"${(r.note || "").replace(/"/g, '""')}"`,
+    ].join(","));
+  }
+  const csv = lines.join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `inventory-entries-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 export default function InventoryEntryClient({ initialRecent, canEdit = true }) {
@@ -334,7 +360,15 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
       <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between">
           <h3 className="text-sm font-medium text-slate-300">Recent Entries</h3>
-          <span className="text-[11px] text-slate-500">Edit or delete a mistaken entry anytime — the balance recalculates automatically.</span>
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] text-slate-500">Edit or delete a mistaken entry anytime — the balance recalculates automatically.</span>
+            <button
+              onClick={() => downloadEntriesCsv(recent)}
+              className="flex items-center gap-1.5 text-[11px] text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 rounded-md shrink-0"
+            >
+              <Download className="w-3 h-3" /> Download CSV
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto max-h-96 overflow-y-auto">
           <table className="w-full text-sm">
