@@ -55,13 +55,6 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
   const reorderNow = categoryFiltered.filter((r) => r.runoutDays != null && r.runoutDays > 15 && r.runoutDays <= 30).length;
   const dormantLines = categoryFiltered.filter((r) => r.currentStock === 0).length;
 
-  // The single most urgent item to reorder within the current filter.
-  const nextReorderItem = useMemo(() => {
-    const withDates = categoryFiltered.filter((r) => r.runoutDate && r.runoutDays != null);
-    if (withDates.length === 0) return null;
-    return [...withDates].sort((a, b) => a.runoutDays - b.runoutDays)[0];
-  }, [categoryFiltered]);
-
   // ---- Bulk commodity levels: respects the active category filter.
   // When "All" is selected, show ONE representative (highest-stock) item per
   // true bulk category, so a single category (e.g. Steel) can't dominate all 4 cards.
@@ -141,31 +134,11 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard icon={Package} label="TRACKED ITEMS" value={totalItems} sub="Live balance — view full list" href={catalogueHref(null)} />
         <StatCard icon={AlertTriangle} label="CRITICAL STOCK-OUTS" value={criticalStockouts} sub="Run-out within 15 days" accent="rose" href={catalogueHref("critical")} />
         <StatCard icon={Clock} label="REORDER NOW" value={reorderNow} sub="Run-out in 16–30 days" accent="teal" href={catalogueHref("reorder")} />
         <StatCard icon={Archive} label="ZERO STOCK LINES" value={dormantLines} sub="Currently at 0 balance" accent="slate" href={catalogueHref("zero")} />
-        <Link
-          href={nextReorderItem ? `/item/${nextReorderItem.id}` : "#"}
-          className="bg-[#12151c] border border-[#232733] rounded-xl p-3 hover:border-slate-500 transition block"
-        >
-          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500">
-            <CalendarClock className="w-3.5 h-3.5" /> Next Reorder Due
-          </div>
-          {nextReorderItem ? (
-            <>
-              <div className="text-sm font-semibold text-white mt-1.5 truncate" title={nextReorderItem.description}>
-                {nextReorderItem.description}
-              </div>
-              <div className="text-[11px] text-teal-400 mt-0.5">
-                {nextReorderItem.runoutDate} · {fmt(nextReorderItem.runoutDays)} days
-              </div>
-            </>
-          ) : (
-            <div className="text-sm text-slate-500 mt-2">No data</div>
-          )}
-        </Link>
       </div>
 
       {/* Bulk commodities + donut */}
@@ -262,7 +235,7 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
         <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between flex-wrap gap-1">
             <h3 className="text-sm font-medium text-slate-300">Sand &amp; Aggregate — by location</h3>
-            <span className="text-[11px] text-slate-500">Received/issued totals from bin-card history — not a per-location balance</span>
+            <span className="text-[11px] text-slate-500">Available balance = Received − Issued, from bin-card history</span>
           </div>
           <div className="overflow-x-auto max-h-80 overflow-y-auto">
             <table className="w-full text-sm">
@@ -276,27 +249,39 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
                     <span className="text-teal-400">Thilafushi</span> Issued
                   </th>
                   <th className="px-4 py-2.5 text-right">
+                    <span className="text-teal-400">Thilafushi</span> Available
+                  </th>
+                  <th className="px-4 py-2.5 text-right">
                     <span className="text-violet-400">Mamigili</span> Received
                   </th>
                   <th className="px-4 py-2.5 text-right">
                     <span className="text-violet-400">Mamigili</span> Issued
                   </th>
+                  <th className="px-4 py-2.5 text-right">
+                    <span className="text-violet-400">Mamigili</span> Available
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {locationBreakdown.map((row) => (
-                  <tr key={row.itemId} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
-                    <td className="px-4 py-2">
-                      <Link href={`/item/${row.itemId}`} className="text-teal-400 hover:underline">
-                        {row.description}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Thilafushi.received)}</td>
-                    <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Thilafushi.issued)}</td>
-                    <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Mamigili.received)}</td>
-                    <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Mamigili.issued)}</td>
-                  </tr>
-                ))}
+                {locationBreakdown.map((row) => {
+                  const thfAvailable = fmt(row.Thilafushi.received - row.Thilafushi.issued);
+                  const mmgAvailable = fmt(row.Mamigili.received - row.Mamigili.issued);
+                  return (
+                    <tr key={row.itemId} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
+                      <td className="px-4 py-2">
+                        <Link href={`/item/${row.itemId}`} className="text-teal-400 hover:underline">
+                          {row.description}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Thilafushi.received)}</td>
+                      <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Thilafushi.issued)}</td>
+                      <td className="px-4 py-2 text-right font-semibold text-white">{thfAvailable}</td>
+                      <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Mamigili.received)}</td>
+                      <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Mamigili.issued)}</td>
+                      <td className="px-4 py-2 text-right font-semibold text-white">{mmgAvailable}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getCurrentUser, isAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { User, Users, UploadCloud, History, RotateCcw, ChevronRight } from "lucide-react";
+import { Users, UploadCloud, History, RotateCcw, ChevronRight } from "lucide-react";
 import ChangePasswordForm from "@/components/ChangePasswordForm";
+import AvatarUpload from "@/components/AvatarUpload";
 
 const ROLE_LABEL = {
   ADMIN: "Admin — full access",
@@ -23,9 +24,7 @@ export default async function SettingsPage() {
 
       <div className="bg-[#12151c] border border-[#232733] rounded-xl p-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-teal-500/15 text-teal-400 flex items-center justify-center">
-            <User className="w-5 h-5" />
-          </div>
+          <AvatarUpload initialAvatarUrl={user.avatarDataUrl} name={user.name} />
           <div>
             <div className="text-sm font-medium text-white">{user.name}</div>
             <div className="text-xs text-slate-500">{user.email}</div>

@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         String   @default("VIEWER") // "ADMIN" | "EDITOR" | "VIEWER"
-  createdAt    DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  passwordHash  String
+  role          String   @default("VIEWER") // "ADMIN" | "EDITOR" | "VIEWER"
+  avatarDataUrl String?  @db.Text
+  createdAt     DateTime @default(now())
 }
 
 model UploadLog {
@@ -76,15 +77,16 @@ model MonthlyMovement {
 // Live entries logged from the app: GRN (received), USAGE (consumed), DAMAGE (spoilage/loss).
 // These are never touched by a file re-upload.
 model Transaction {
-  id        Int      @id @default(autoincrement())
-  itemId    Int
-  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  type      String   // "GRN" | "USAGE" | "DAMAGE"
-  quantity  Float
-  date      DateTime
-  note      String?
-  source    String   @default("manual") // "manual" | "historical-import"
-  createdAt DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  itemId        Int
+  item          Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  type          String   // "GRN" | "USAGE" | "DAMAGE"
+  quantity      Float
+  date          DateTime
+  note          String?
+  source        String   @default("manual") // "manual" | "historical-import"
+  sourceBalance Float?   // balance exactly as recorded in the original bin-card row, when known
+  createdAt     DateTime @default(now())
 
   @@index([itemId])
   @@index([date])

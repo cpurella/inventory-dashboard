@@ -25,6 +25,15 @@ export default async function AppLayout({ children }) {
               <div className="text-sm text-white">Welcome, {user.name}</div>
               <div className="text-[11px] text-slate-500">{user.email}</div>
             </div>
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-teal-500/15 border border-[#232733] flex items-center justify-center shrink-0">
+              {user.avatarDataUrl ? (
+                <img src={user.avatarDataUrl} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-teal-400 text-xs font-semibold">
+                  {user.name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
+                </span>
+              )}
+            </div>
             <LogoutButton />
           </div>
         </header>

@@ -29,8 +29,9 @@ export async function POST(request) {
       type: t.type,
       quantity: t.quantity,
       date: new Date(t.date),
-      note: t.note ? `${t.note} (from bin card)` : "Imported from bin card",
+      note: t.note || "Bin card entry",
       source: "historical-import",
+      sourceBalance: t.sourceBalance != null ? t.sourceBalance : null,
     }));
 
     const CHUNK = 500;

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-import { getCategoryItemsWithLedger } from "@/lib/data";
+import { getCategoryItemsWithLedger, cleanNote } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -44,11 +44,11 @@ export async function GET(request) {
         for (const l of it.ledger) {
           const locMatch = l.note ? l.note.match(/^\[(.+?)\]\s*(.*)$/) : null;
           const location = locMatch ? locMatch[1] : "";
-          const noteText = locMatch ? locMatch[2] : l.note || "";
+          const noteText = cleanNote(locMatch ? locMatch[2] : l.note) || "";
           aoa.push([
             l.date,
             l.type,
-            location,
+            location || "-",
             noteText,
             l.type === "GRN" ? l.quantity : "",
             l.type !== "GRN" ? l.quantity : "",
@@ -65,7 +65,13 @@ export async function GET(request) {
     const worksheet = XLSX.utils.aoa_to_sheet(aoa);
     worksheet["!merges"] = merges;
     worksheet["!cols"] = [
-      { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 42 }, { wch: 12 }, { wch: 12 }, { wch: 14 },
+      { wch: 12 },  // Date
+      { wch: 9 },   // Type
+      { wch: 12 },  // Location
+      { wch: 65 },  // Reference / Customer -- generous width so text isn't clipped
+      { wch: 12 },  // In
+      { wch: 12 },  // Out
+      { wch: 14 },  // Balance
     ];
     worksheet["!freeze"] = { xSplit: 0, ySplit: 2 };
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getItemById } from "@/lib/data";
+import { getItemById, cleanNote } from "@/lib/data";
 import { MONTH_LABELS } from "@/lib/constants";
 import ItemChart from "@/components/ItemChart";
 
@@ -153,7 +153,7 @@ export default async function ItemPage({ params }) {
                 {item.ledger.map((l) => {
                   const locMatch = l.note ? l.note.match(/^\[(.+?)\]\s*(.*)$/) : null;
                   const location = locMatch ? locMatch[1] : null;
-                  const noteText = locMatch ? locMatch[2] : l.note;
+                  const noteText = cleanNote(locMatch ? locMatch[2] : l.note);
                   return (
                     <tr key={l.id} className="border-b border-[#1c2029]">
                       <td className="px-5 py-2 text-slate-400 text-xs">{l.date}</td>
