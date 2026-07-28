@@ -36,26 +36,25 @@ export default function ImportHistoryClient() {
   }
 
   return (
-    <div className="max-w-lg space-y-4 text-slate-200">
+    <div className="max-w-lg space-y-4 text-[var(--text-primary)]">
       <div>
-        <h2 className="text-lg font-semibold text-white">Import Historical Bin Card Data</h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-[var(--text-muted)] mt-1">
           Loads every individual receipt and issue recorded in the original Bin Card sheets
           (Jan – Jul 2026) as dated entries, so each item's report shows full day-by-day history —
           not just monthly totals.
         </p>
       </div>
 
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl p-4 flex gap-3">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 flex gap-3">
         <Info className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
-        <div className="text-sm text-slate-300">
+        <div className="text-sm text-[var(--text-primary)]">
           This does <strong>not</strong> change any current balance — balances were already correct
           from the monthly totals. This only adds detailed history for viewing. Safe to run more than
           once; re-running replaces the previous import instead of duplicating it, and never touches
           entries you've logged manually.
           {alreadyImported != null && (
-            <div className="mt-2 text-xs text-slate-500">
-              Currently imported: <strong className="text-slate-300">{alreadyImported}</strong> entries.
+            <div className="mt-2 text-xs text-[var(--text-muted)]">
+              Currently imported: <strong className="text-[var(--text-primary)]">{alreadyImported}</strong> entries.
             </div>
           )}
         </div>

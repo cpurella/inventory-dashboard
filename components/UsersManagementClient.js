@@ -88,39 +88,38 @@ export default function UsersManagementClient({ currentUserId }) {
   }
 
   return (
-    <div className="max-w-2xl space-y-4 text-slate-200">
+    <div className="max-w-2xl space-y-4 text-[var(--text-primary)]">
       <div>
-        <h2 className="text-lg font-semibold text-white">Manage Users</h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-[var(--text-muted)] mt-1">
           Only admins can add accounts. Choose a role based on what someone needs to do.
         </p>
       </div>
 
-      <form onSubmit={handleAdd} className="bg-[#12151c] border border-[#232733] rounded-xl p-4 space-y-3">
+      <form onSubmit={handleAdd} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             type="text" required placeholder="Full name" value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+            className="bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
           />
           <input
             type="email" required placeholder="Email" value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+            className="bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
           />
           <input
             type="password" required minLength={6} placeholder="Temporary password" value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+            className="bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
           />
           <select
             value={role} onChange={(e) => setRole(e.target.value)}
-            className="bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+            className="bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
           >
             {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
           </select>
         </div>
-        <div className="text-[11px] text-slate-500">{ROLE_DESC[role]}</div>
+        <div className="text-[11px] text-[var(--text-muted)]">{ROLE_DESC[role]}</div>
         {error && <div className="text-sm rounded-md p-3 bg-rose-500/10 text-rose-400">{error}</div>}
         <button
           type="submit" disabled={busy}
@@ -130,26 +129,26 @@ export default function UsersManagementClient({ currentUserId }) {
         </button>
       </form>
 
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733]">
-          <h3 className="text-sm font-medium text-slate-300">All Users</h3>
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--border)]">
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">All Users</h3>
         </div>
-        <div className="divide-y divide-[#1c2029]">
-          {users === null && <div className="p-6 text-center text-slate-500 text-sm">Loading...</div>}
+        <div className="divide-y divide-[var(--border-subtle)]">
+          {users === null && <div className="p-6 text-center text-[var(--text-muted)] text-sm">Loading...</div>}
           {users && users.map((u) => (
             <div key={u.id} className="flex items-center justify-between px-4 py-3 gap-3">
               <div className="min-w-0">
-                <div className="text-sm text-white truncate">
-                  {u.name} {u.id === currentUserId && <span className="text-[10px] text-slate-500">(you)</span>}
+                <div className="text-sm text-[var(--text-primary)] truncate">
+                  {u.name} {u.id === currentUserId && <span className="text-[10px] text-[var(--text-muted)]">(you)</span>}
                 </div>
-                <div className="text-[11px] text-slate-500 truncate">{u.email}</div>
+                <div className="text-[11px] text-[var(--text-muted)] truncate">{u.email}</div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <select
                   value={u.role}
                   disabled={rowBusy === u.id}
                   onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                  className="bg-[#0e1117] border border-[#232733] rounded-md px-2 py-1 text-xs disabled:opacity-50"
+                  className="bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-2 py-1 text-xs disabled:opacity-50"
                 >
                   {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
                 </select>
@@ -157,7 +156,7 @@ export default function UsersManagementClient({ currentUserId }) {
                   <button
                     onClick={() => handleRemove(u)}
                     disabled={rowBusy === u.id}
-                    className="text-slate-400 hover:text-rose-400 disabled:opacity-50"
+                    className="text-[var(--text-secondary)] hover:text-rose-400 disabled:opacity-50"
                     title="Remove user"
                   >
                     <Trash2 className="w-4 h-4" />

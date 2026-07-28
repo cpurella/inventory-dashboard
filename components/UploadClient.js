@@ -136,19 +136,18 @@ export default function UploadClient() {
   }
 
   return (
-    <div className="max-w-2xl space-y-4 text-slate-200">
+    <div className="max-w-2xl space-y-4 text-[var(--text-primary)]">
       <div>
-        <h2 className="text-lg font-semibold text-white">Upload Inventory File</h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-[var(--text-muted)] mt-1">
           Drop in an updated inventory report (same format as the original — a "PHY-Inventory-List" sheet and
           an "Annual-Inv-MVMNT-..." sheet). The file is read right here in your browser, then only the
           extracted item data is sent to merge in — so even large files upload fine.
         </p>
       </div>
 
-      <div className="bg-[#12151c] border border-emerald-500/30 rounded-xl p-4 flex gap-3">
+      <div className="bg-[var(--bg-card)] border border-emerald-500/30 rounded-xl p-4 flex gap-3">
         <FileSpreadsheet className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-        <div className="text-sm text-slate-300">
+        <div className="text-sm text-[var(--text-primary)]">
           <strong className="text-emerald-400">Your logged entries are safe.</strong> Uploading a new file
           updates item details (description, category, UOM) and merges in the new quantities as a top-up —
           it does <strong>not</strong> erase any GRN, Usage, or Damage entries you've logged in the app. Any new
@@ -167,7 +166,7 @@ export default function UploadClient() {
         }}
         onClick={() => inputRef.current?.click()}
         className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition ${
-          dragOver ? "border-teal-500/50 bg-teal-500/5" : "border-[#232733] hover:border-[#333]"
+          dragOver ? "border-teal-500/50 bg-teal-500/5" : "border-[var(--border)] hover:border-[#333]"
         }`}
       >
         <input
@@ -180,11 +179,11 @@ export default function UploadClient() {
         {file ? (
           <div className="flex flex-col items-center gap-2">
             <FileSpreadsheet className="w-8 h-8 text-emerald-400" />
-            <div className="text-sm text-white">{file.name}</div>
-            <div className="text-xs text-slate-500">{(file.size / 1024).toFixed(0)} KB — click to choose a different file</div>
+            <div className="text-sm text-[var(--text-primary)]">{file.name}</div>
+            <div className="text-xs text-[var(--text-muted)]">{(file.size / 1024).toFixed(0)} KB — click to choose a different file</div>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-2 text-slate-500">
+          <div className="flex flex-col items-center gap-2 text-[var(--text-muted)]">
             <UploadCloud className="w-8 h-8" />
             <div className="text-sm">Drag & drop the .xlsx file here, or click to browse</div>
           </div>
@@ -192,7 +191,7 @@ export default function UploadClient() {
       </div>
 
       {file && (
-        <label className="flex items-start gap-2 text-sm text-slate-300">
+        <label className="flex items-start gap-2 text-sm text-[var(--text-primary)]">
           <input
             type="checkbox"
             checked={understood}

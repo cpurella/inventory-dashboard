@@ -87,7 +87,7 @@ export default function AvatarUpload({ initialAvatarUrl, name }) {
     <div className="flex items-center gap-4">
       <div
         onClick={() => inputRef.current?.click()}
-        className="relative w-16 h-16 rounded-full overflow-hidden cursor-pointer group shrink-0 bg-teal-500/15 border border-[#232733] flex items-center justify-center"
+        className="relative w-16 h-16 rounded-full overflow-hidden cursor-pointer group shrink-0 bg-teal-500/15 border border-[var(--border)] flex items-center justify-center"
         title="Change profile picture"
       >
         {avatarUrl ? (
@@ -120,7 +120,7 @@ export default function AvatarUpload({ initialAvatarUrl, name }) {
             <button
               onClick={handleRemove}
               disabled={busy}
-              className="text-xs flex items-center gap-1 text-slate-400 hover:text-rose-400 disabled:opacity-50"
+              className="text-xs flex items-center gap-1 text-[var(--text-secondary)] hover:text-rose-400 disabled:opacity-50"
             >
               <Trash2 className="w-3.5 h-3.5" /> Remove
             </button>

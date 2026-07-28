@@ -210,9 +210,9 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
   }
 
   return (
-    <div className="space-y-4 text-slate-200">
+    <div className="space-y-4 text-[var(--text-primary)]">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="text-xs text-slate-500">
+        <div className="text-xs text-[var(--text-muted)]">
           Log items received, used, or damaged/spoiled — the dashboard balance updates immediately.
         </div>
         {canEdit && (
@@ -239,7 +239,7 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                   key={t.key}
                   onClick={() => { setActiveTab(t.key); setMessage(null); }}
                   className={`flex items-center gap-2 text-sm px-3 py-2 rounded-md border transition ${
-                    active ? c.ring + " " + c.text : "border-[#232733] text-slate-400 hover:bg-white/5"
+                    active ? c.ring + " " + c.text : "border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--hover-overlay)]"
                   }`}
                 >
                   <Icon className="w-4 h-4" /> {t.label}
@@ -249,14 +249,14 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
           </div>
 
           {/* Entry form */}
-          <form onSubmit={handleSubmit} className="bg-[#12151c] border border-[#232733] rounded-xl p-5 space-y-4">
+          <form onSubmit={handleSubmit} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 space-y-4">
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Item</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Item</label>
           {selectedItem ? (
-            <div className="flex items-center justify-between bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2">
+            <div className="flex items-center justify-between bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2">
               <div>
-                <div className="text-sm text-white">{selectedItem.description}</div>
-                <div className="text-[11px] text-slate-500">
+                <div className="text-sm text-[var(--text-primary)]">{selectedItem.description}</div>
+                <div className="text-[11px] text-[var(--text-muted)]">
                   {selectedItem.code} · {selectedItem.category} · Current: {fmt(selectedItem.currentStock)} {selectedItem.uom}
                 </div>
               </div>
@@ -270,25 +270,25 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
             </div>
           ) : (
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Type item code or name to search..."
-                className="w-full bg-[#0e1117] border border-[#232733] rounded-md pl-9 pr-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
+                className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md pl-9 pr-3 py-2 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
               />
               {matches.length > 0 && (
-                <div className="absolute z-20 mt-1 w-full bg-[#12151c] border border-[#232733] rounded-md shadow-lg max-h-64 overflow-y-auto">
+                <div className="absolute z-20 mt-1 w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-md shadow-lg max-h-64 overflow-y-auto">
                   {matches.map((it) => (
                     <button
                       key={it.id}
                       type="button"
                       onClick={() => pickItem(it)}
-                      className="w-full text-left px-3 py-2 text-sm hover:bg-white/5 border-b border-[#1c2029] last:border-b-0"
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-[var(--hover-overlay)] border-b border-[var(--border-subtle)] last:border-b-0"
                     >
-                      <div className="text-slate-200">{it.description}</div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-[var(--text-primary)]">{it.description}</div>
+                      <div className="text-[11px] text-[var(--text-muted)]">
                         {it.code} · {it.category} · current: {fmt(it.currentStock)} {it.uom}
                       </div>
                     </button>
@@ -301,7 +301,7 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">
               Quantity {selectedItem ? `(${selectedItem.uom})` : ""}
             </label>
             <input
@@ -310,29 +310,29 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
               step="any"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
               placeholder="0"
             />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Date</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Date</label>
             <input
               type="date"
               value={date}
               min="2026-01-01"
               max="2026-12-31"
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm [color-scheme:dark] focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
             />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Note (optional)</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Note (optional)</label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder={activeTab === "DAMAGE" ? "Reason for damage/spoilage..." : "e.g. supplier / job reference"}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
             />
           </div>
         </div>
@@ -357,11 +357,11 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
       )}
 
       {/* Recent entries log */}
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between">
-          <h3 className="text-sm font-medium text-slate-300">Recent Entries</h3>
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">Recent Entries</h3>
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-slate-500">Edit or delete a mistaken entry anytime — the balance recalculates automatically.</span>
+            <span className="text-[11px] text-[var(--text-muted)]">Edit or delete a mistaken entry anytime — the balance recalculates automatically.</span>
             <button
               onClick={() => downloadEntriesCsv(recent)}
               className="flex items-center gap-1.5 text-[11px] text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 rounded-md shrink-0"
@@ -372,8 +372,8 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
         </div>
         <div className="overflow-x-auto max-h-96 overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-[#12151c] z-10">
-              <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
+            <thead className="sticky top-0 bg-[var(--bg-card)] z-10">
+              <tr className="text-left text-[var(--text-muted)] text-xs uppercase tracking-wider border-b border-[var(--border)]">
                 <th className="px-4 py-2.5">Date</th>
                 <th className="px-4 py-2.5">Type</th>
                 <th className="px-4 py-2.5">Item</th>
@@ -389,8 +389,8 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                 const isEditing = editingId === r.id;
                 const busy = rowBusy === r.id;
                 return (
-                  <tr key={r.id} className="border-b border-[#1c2029]">
-                    <td className="px-4 py-2 text-slate-400 text-xs">
+                  <tr key={r.id} className="border-b border-[var(--border-subtle)]">
+                    <td className="px-4 py-2 text-[var(--text-secondary)] text-xs">
                       {isEditing ? (
                         <input
                           type="date"
@@ -398,7 +398,7 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                           min="2026-01-01"
                           max="2026-12-31"
                           onChange={(e) => setEditDate(e.target.value)}
-                          className="bg-[#0e1117] border border-[#232733] rounded px-1.5 py-1 text-xs w-32 [color-scheme:dark]"
+                          className="bg-[var(--bg-nested)] border border-[var(--border)] rounded px-1.5 py-1 text-xs w-32"
                         />
                       ) : (
                         r.date
@@ -409,8 +409,8 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                         {r.type}
                       </span>
                     </td>
-                    <td className="px-4 py-2 text-slate-200">{r.description}</td>
-                    <td className="px-4 py-2 text-right text-white">
+                    <td className="px-4 py-2 text-[var(--text-primary)]">{r.description}</td>
+                    <td className="px-4 py-2 text-right text-[var(--text-primary)]">
                       {isEditing ? (
                         <input
                           type="number"
@@ -418,19 +418,19 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                           step="any"
                           value={editQty}
                           onChange={(e) => setEditQty(e.target.value)}
-                          className="bg-[#0e1117] border border-[#232733] rounded px-1.5 py-1 text-xs w-20 text-right"
+                          className="bg-[var(--bg-nested)] border border-[var(--border)] rounded px-1.5 py-1 text-xs w-20 text-right"
                         />
                       ) : (
                         `${fmt(r.quantity)} ${r.uom}`
                       )}
                     </td>
-                    <td className="px-4 py-2 text-slate-500 text-xs">
+                    <td className="px-4 py-2 text-[var(--text-muted)] text-xs">
                       {isEditing ? (
                         <input
                           type="text"
                           value={editNote}
                           onChange={(e) => setEditNote(e.target.value)}
-                          className="bg-[#0e1117] border border-[#232733] rounded px-1.5 py-1 text-xs w-full"
+                          className="bg-[var(--bg-nested)] border border-[var(--border)] rounded px-1.5 py-1 text-xs w-full"
                         />
                       ) : (
                         r.note || "-"
@@ -453,7 +453,7 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                             type="button"
                             disabled={busy}
                             onClick={cancelEdit}
-                            className="text-slate-500 hover:text-slate-300"
+                            className="text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                             title="Cancel"
                           >
                             <X className="w-4 h-4" />
@@ -465,7 +465,7 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                             type="button"
                             disabled={busy}
                             onClick={() => startEdit(r)}
-                            className="text-slate-400 hover:text-teal-400 disabled:opacity-50"
+                            className="text-[var(--text-secondary)] hover:text-teal-400 disabled:opacity-50"
                             title="Edit"
                           >
                             <Pencil className="w-4 h-4" />
@@ -474,7 +474,7 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
                             type="button"
                             disabled={busy}
                             onClick={() => deleteEntry(r)}
-                            className="text-slate-400 hover:text-rose-400 disabled:opacity-50"
+                            className="text-[var(--text-secondary)] hover:text-rose-400 disabled:opacity-50"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -489,7 +489,7 @@ export default function InventoryEntryClient({ initialRecent, canEdit = true }) 
             </tbody>
           </table>
           {recent.length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-sm">No entries logged yet.</div>
+            <div className="p-8 text-center text-[var(--text-muted)] text-sm">No entries logged yet.</div>
           )}
         </div>
       </div>

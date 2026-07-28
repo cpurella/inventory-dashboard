@@ -103,8 +103,8 @@ export default function MovementClient({ items, categories, defaultMonth }) {
   }
 
   return (
-    <div className="space-y-4 text-slate-200">
-      <div className="text-xs text-slate-500">
+    <div className="space-y-4 text-[var(--text-primary)]">
+      <div className="text-xs text-[var(--text-muted)]">
         Click any item to open its full 12-month movement chart. Sort or filter to find fast-moving or dormant lines.
       </div>
 
@@ -114,39 +114,39 @@ export default function MovementClient({ items, categories, defaultMonth }) {
           placeholder="Find code or description..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-80 bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
+          className="w-full md:w-80 bg-[var(--bg-card)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
         />
         <div className="flex items-center gap-2 flex-wrap">
-          <label className="text-xs uppercase tracking-wide text-slate-500">Category</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm"
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm"
           >
             <option value="All">All categories</option>
             {categories.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <label className="text-xs uppercase tracking-wide text-slate-500">Month</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Month</label>
           <input
             type="month"
             value={month}
             min="2026-01"
             max="2026-12"
             onChange={(e) => e.target.value && setMonth(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm text-slate-200 [color-scheme:dark]"
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm text-[var(--text-primary)]"
           />
         </div>
       </div>
 
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between">
-          <h3 className="text-sm font-medium text-slate-300">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">
             Movement report — {MONTH_LABELS[month]} 2026
           </h3>
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-slate-500">{filtered.length} of {items.length} items</span>
+            <span className="text-[11px] text-[var(--text-muted)]">{filtered.length} of {items.length} items</span>
             <button
               onClick={() => downloadCsv(filtered, month)}
               className="flex items-center gap-1.5 text-[11px] text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 rounded-md"
@@ -157,8 +157,8 @@ export default function MovementClient({ items, categories, defaultMonth }) {
         </div>
         <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-[#12151c] z-10">
-              <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
+            <thead className="sticky top-0 bg-[var(--bg-card)] z-10">
+              <tr className="text-left text-[var(--text-muted)] text-xs uppercase tracking-wider border-b border-[var(--border)]">
                 <th className="px-4 py-2.5 cursor-pointer select-none" onClick={() => toggleSort("code")}>Code{sortArrow("code")}</th>
                 <th className="px-4 py-2.5 cursor-pointer select-none" onClick={() => toggleSort("description")}>Item Description{sortArrow("description")}</th>
                 <th className="px-4 py-2.5">Category</th>
@@ -171,25 +171,25 @@ export default function MovementClient({ items, categories, defaultMonth }) {
             </thead>
             <tbody>
               {filtered.map((r) => (
-                <tr key={r.id} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
-                  <td className="px-4 py-2 font-mono text-xs text-slate-400">{r.code}</td>
+                <tr key={r.id} className="border-b border-[var(--border-subtle)] hover:bg-[var(--hover-overlay)]">
+                  <td className="px-4 py-2 font-mono text-xs text-[var(--text-secondary)]">{r.code}</td>
                   <td className="px-4 py-2">
                     <Link href={`/item/${r.id}`} className="text-teal-400 hover:text-teal-300 hover:underline font-medium">
                       {r.description} →
                     </Link>
                   </td>
-                  <td className="px-4 py-2 text-slate-400 text-xs">{r.category}</td>
+                  <td className="px-4 py-2 text-[var(--text-secondary)] text-xs">{r.category}</td>
                   <td className="px-4 py-2 text-right text-emerald-400">{fmt(r.added)}</td>
                   <td className="px-4 py-2 text-right text-rose-400">{fmt(r.usage)}</td>
                   <td className="px-4 py-2 text-right">{fmt(r.avgPerDay)}</td>
                   <td className="px-4 py-2 text-right">{r.runoutDays != null ? fmt(r.runoutDays) : "-"}</td>
-                  <td className="px-4 py-2 text-right text-[11px] text-slate-400">{r.runoutDate || "-"}</td>
+                  <td className="px-4 py-2 text-right text-[11px] text-[var(--text-secondary)]">{r.runoutDate || "-"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           {filtered.length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-sm">No items match your search.</div>
+            <div className="p-8 text-center text-[var(--text-muted)] text-sm">No items match your search.</div>
           )}
         </div>
       </div>

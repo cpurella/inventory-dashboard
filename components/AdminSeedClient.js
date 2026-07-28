@@ -29,18 +29,17 @@ export default function AdminSeedClient() {
   }
 
   return (
-    <div className="max-w-lg space-y-4 text-slate-200">
+    <div className="max-w-lg space-y-4 text-[var(--text-primary)]">
       <div>
-        <h2 className="text-lg font-semibold text-white">Reset to Original Data</h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-[var(--text-muted)] mt-1">
           This wipes the live database and reloads it from the original inventory file bundled with the app.
           Use this only if something needs to be started over.
         </p>
       </div>
 
-      <div className="bg-[#12151c] border border-rose-500/30 rounded-xl p-4 flex gap-3">
+      <div className="bg-[var(--bg-card)] border border-rose-500/30 rounded-xl p-4 flex gap-3">
         <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-        <div className="text-sm text-slate-300">
+        <div className="text-sm text-[var(--text-primary)]">
           <strong className="text-rose-400">Warning:</strong> this permanently deletes every GRN, Usage, and Damage
           entry that has been logged so far. This cannot be undone.
         </div>
@@ -49,7 +48,7 @@ export default function AdminSeedClient() {
       {!confirming ? (
         <button
           onClick={() => setConfirming(true)}
-          className="bg-[#12151c] border border-[#232733] text-sm px-4 py-2 rounded-md hover:bg-white/5"
+          className="bg-[var(--bg-card)] border border-[var(--border)] text-sm px-4 py-2 rounded-md hover:bg-[var(--hover-overlay)]"
         >
           Reset Data...
         </button>
@@ -65,7 +64,7 @@ export default function AdminSeedClient() {
           <button
             onClick={() => setConfirming(false)}
             disabled={busy}
-            className="text-sm px-4 py-2 rounded-md text-slate-400 hover:bg-white/5"
+            className="text-sm px-4 py-2 rounded-md text-[var(--text-secondary)] hover:bg-[var(--hover-overlay)]"
           >
             Cancel
           </button>

@@ -38,53 +38,46 @@ export default function UploadHistoryClient() {
   }
 
   return (
-    <div className="space-y-4 text-slate-200">
-      <div>
-        <h2 className="text-lg font-semibold text-white">Upload History</h2>
-        <p className="text-sm text-slate-500 mt-1">
-          Every file uploaded through "Upload inventory file", with who ran it and what changed.
-        </p>
-      </div>
-
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl p-4 flex gap-3">
+    <div className="space-y-4 text-[var(--text-primary)]">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4 flex gap-3">
         <Info className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
-        <div className="text-sm text-slate-300">
+        <div className="text-sm text-[var(--text-primary)]">
           Deleting an entry here only removes it from this list — it does <strong>not</strong> undo the
           item/category/monthly updates that upload already made.
         </div>
       </div>
 
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733]">
-          <h3 className="text-sm font-medium text-slate-300">Past Uploads</h3>
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--border)]">
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">Past Uploads</h3>
         </div>
-        <div className="max-h-[600px] overflow-y-auto divide-y divide-[#1c2029]">
+        <div className="max-h-[600px] overflow-y-auto divide-y divide-[var(--border-subtle)]">
           {logs === null && (
-            <div className="p-8 text-center text-slate-500 text-sm">Loading...</div>
+            <div className="p-8 text-center text-[var(--text-muted)] text-sm">Loading...</div>
           )}
           {logs && logs.length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-sm">No files uploaded yet.</div>
+            <div className="p-8 text-center text-[var(--text-muted)] text-sm">No files uploaded yet.</div>
           )}
           {logs && logs.map((l) => (
             <div key={l.id} className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-3 min-w-0">
                 <FileSpreadsheet className="w-5 h-5 text-teal-400 shrink-0" />
                 <div className="min-w-0">
-                  <div className="text-sm text-white truncate">{l.filename}</div>
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-sm text-[var(--text-primary)] truncate">{l.filename}</div>
+                  <div className="text-[11px] text-[var(--text-muted)]">
                     {fmtDate(l.createdAt)} {l.uploadedByName ? `· by ${l.uploadedByName}` : ""}
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-4 shrink-0 ml-3">
-                <div className="text-right text-[11px] text-slate-400">
+                <div className="text-right text-[11px] text-[var(--text-secondary)]">
                   <div><span className="text-emerald-400">{l.itemsUpdated}</span> updated</div>
                   <div><span className="text-sky-400">{l.itemsAdded}</span> added</div>
                 </div>
                 <button
                   onClick={() => handleDelete(l.id)}
                   disabled={busyId === l.id}
-                  className="text-slate-400 hover:text-rose-400 disabled:opacity-50"
+                  className="text-[var(--text-secondary)] hover:text-rose-400 disabled:opacity-50"
                   title="Remove from history"
                 >
                   <Trash2 className="w-4 h-4" />

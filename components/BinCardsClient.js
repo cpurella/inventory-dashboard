@@ -34,8 +34,8 @@ export default function BinCardsClient({ items, categories }) {
   }, [items]);
 
   return (
-    <div className="space-y-4 text-slate-200">
-      <div className="text-xs text-slate-500">
+    <div className="space-y-4 text-[var(--text-primary)]">
+      <div className="text-xs text-[var(--text-muted)]">
         Browse Bin Cards by category — pick a category, then open any item to see its full
         receipt / issue ledger with running balance.
       </div>
@@ -49,32 +49,32 @@ export default function BinCardsClient({ items, categories }) {
             className={`text-xs px-3 py-1.5 rounded-full border transition ${
               category === c
                 ? "border-teal-500/50 bg-teal-500/10 text-teal-400"
-                : "border-[#232733] text-slate-400 hover:bg-white/5"
+                : "border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--hover-overlay)]"
             }`}
           >
-            {c} <span className="text-slate-500">({categoryCounts[c] || 0})</span>
+            {c} <span className="text-[var(--text-muted)]">({categoryCounts[c] || 0})</span>
           </button>
         ))}
       </div>
 
       {/* Search within category */}
       <div className="relative w-full md:w-80">
-        <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           placeholder={`Find in ${category}...`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
+          className="w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
         />
       </div>
 
       {/* Item list for the selected category */}
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between gap-2 flex-wrap">
-          <h3 className="text-sm font-medium text-slate-300">{category}</h3>
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between gap-2 flex-wrap">
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">{category}</h3>
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-slate-500">{filtered.length} items</span>
+            <span className="text-[11px] text-[var(--text-muted)]">{filtered.length} items</span>
             <a
               href={`/api/bincards/export?category=${encodeURIComponent(category)}`}
               className="flex items-center gap-1.5 text-[11px] text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 rounded-md"
@@ -83,16 +83,16 @@ export default function BinCardsClient({ items, categories }) {
             </a>
           </div>
         </div>
-        <div className="max-h-[600px] overflow-y-auto divide-y divide-[#1c2029]">
+        <div className="max-h-[600px] overflow-y-auto divide-y divide-[var(--border-subtle)]">
           {filtered.map((it) => (
             <Link
               key={it.id}
               href={`/item/${it.id}`}
-              className="flex items-center justify-between px-4 py-3 hover:bg-white/[0.03] transition"
+              className="flex items-center justify-between px-4 py-3 hover:bg-[var(--hover-overlay)] transition"
             >
               <div className="min-w-0">
-                <div className="text-sm text-white truncate">{it.description}</div>
-                <div className="text-[11px] text-slate-500">
+                <div className="text-sm text-[var(--text-primary)] truncate">{it.description}</div>
+                <div className="text-[11px] text-[var(--text-muted)]">
                   {it.code} · Current: {fmt(it.currentStock)} {it.uom}
                 </div>
               </div>
@@ -102,7 +102,7 @@ export default function BinCardsClient({ items, categories }) {
             </Link>
           ))}
           {filtered.length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-sm">No items match.</div>
+            <div className="p-8 text-center text-[var(--text-muted)] text-sm">No items match.</div>
           )}
         </div>
       </div>

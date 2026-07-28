@@ -38,43 +38,43 @@ export default function ChangePasswordForm() {
   }
 
   return (
-    <div className="bg-[#12151c] border border-[#232733] rounded-xl p-5">
+    <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5">
       <div className="flex items-center gap-2 mb-3">
         <KeyRound className="w-4 h-4 text-teal-400" />
-        <h3 className="text-sm font-medium text-white">Change Password</h3>
+        <h3 className="text-sm font-medium text-[var(--text-primary)]">Change Password</h3>
       </div>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Current Password</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Current Password</label>
           <input
             type="password"
             required
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
+            className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-teal-500/50"
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">New Password</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">New Password</label>
             <input
               type="password"
               required
               minLength={6}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-teal-500/50"
             />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Confirm New Password</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Confirm New Password</label>
             <input
               type="password"
               required
               minLength={6}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-teal-500/50"
             />
           </div>
         </div>

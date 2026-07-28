@@ -12,7 +12,7 @@ export default async function CataloguePage() {
   const categories = await getCategories();
   const defaultMonth = currentMonthKey();
   return (
-    <Suspense fallback={<div className="text-sm text-slate-500">Loading...</div>}>
+    <Suspense fallback={<div className="text-sm text-[var(--text-muted)]">Loading...</div>}>
       <CatalogueClient
         items={items}
         categories={categories}

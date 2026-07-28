@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
 
-export default function LogoutButton() {
+export default function LogoutButton({ compact = false }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
@@ -22,10 +22,11 @@ export default function LogoutButton() {
     <button
       onClick={handleLogout}
       disabled={busy}
-      className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-400 transition disabled:opacity-50"
+      title="Logout"
+      className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] hover:text-rose-400 transition disabled:opacity-50"
     >
       <LogOut className="w-3.5 h-3.5" />
-      {busy ? "Signing out..." : "Logout"}
+      {!compact && (busy ? "Signing out..." : "Logout")}
     </button>
   );
 }

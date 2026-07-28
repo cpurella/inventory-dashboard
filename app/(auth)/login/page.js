@@ -32,29 +32,29 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-[#12151c] border border-[#232733] rounded-xl p-6 space-y-4">
-      <h1 className="text-lg font-semibold text-white text-center">Sign in</h1>
+    <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6 space-y-4">
+      <h1 className="text-lg font-semibold text-[var(--text-primary)] text-center">Sign in</h1>
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Email</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Email</label>
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
+            className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-teal-500/50"
             placeholder="you@example.com"
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Password</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Password</label>
           <input
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-teal-500/50"
+            className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-teal-500/50"
             placeholder="••••••••"
           />
         </div>
@@ -73,7 +73,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="text-center text-xs text-slate-600">
+      <div className="text-center text-xs text-[var(--text-faint)]">
         Need access? Ask an admin to add your account from Settings.
       </div>
     </div>

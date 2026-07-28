@@ -53,57 +53,57 @@ export default function NewItemClient({ categories }) {
   }
 
   return (
-    <div className="max-w-xl space-y-4 text-slate-200">
+    <div className="max-w-xl space-y-4 text-[var(--text-primary)]">
       <div>
-        <h2 className="text-lg font-semibold text-white">Add New Item</h2>
-        <p className="text-sm text-slate-500 mt-1">
+        <h2 className="text-lg font-semibold text-[var(--text-primary)]">Add New Item</h2>
+        <p className="text-sm text-[var(--text-muted)] mt-1">
           For a brand-new item that isn't in the current catalogue yet. It will immediately show up
           everywhere — Dashboard, Master Catalogue, Bin Cards, and Inventory Thilafushi.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-[#12151c] border border-[#232733] rounded-xl p-5 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Item Code</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Item Code</label>
             <input
               type="text"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
               placeholder="e.g. 1099999"
             />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Unit (UOM)</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Unit (UOM)</label>
             <input
               type="text"
               value={uom}
               onChange={(e) => setUom(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
               placeholder="NOS, TON, KG, BAG..."
             />
           </div>
         </div>
 
         <div>
-          <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Item Description</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Item Description</label>
           <input
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+            className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
             placeholder="Full item name"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Category</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
             >
               {categories.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -115,18 +115,18 @@ export default function NewItemClient({ categories }) {
                 type="text"
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
-                className="w-full mt-2 bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+                className="w-full mt-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
                 placeholder="New category name"
               />
             )}
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Packing Size (optional)</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Packing Size (optional)</label>
             <input
               type="text"
               value={packingSize}
               onChange={(e) => setPackingSize(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
               placeholder="e.g. 1 x 50kg"
             />
           </div>
@@ -134,27 +134,27 @@ export default function NewItemClient({ categories }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Opening Stock</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Opening Stock</label>
             <input
               type="number"
               min="0"
               step="any"
               value={openingStock}
               onChange={(e) => setOpeningStock(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
             />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-500 block mb-1">Avg Usage / Day (optional)</label>
+            <label className="text-xs uppercase tracking-wide text-[var(--text-muted)] block mb-1">Avg Usage / Day (optional)</label>
             <input
               type="number"
               min="0"
               step="any"
               value={avgPerDay}
               onChange={(e) => setAvgPerDay(e.target.value)}
-              className="w-full bg-[#0e1117] border border-[#232733] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
+              className="w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-md px-3 py-2 text-sm focus:outline-none focus:border-teal-500/50"
             />
-            <div className="text-[11px] text-slate-500 mt-1">Used to estimate run-out days. Leave 0 if unknown.</div>
+            <div className="text-[11px] text-[var(--text-muted)] mt-1">Used to estimate run-out days. Leave 0 if unknown.</div>
           </div>
         </div>
 

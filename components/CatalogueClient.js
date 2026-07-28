@@ -118,53 +118,49 @@ export default function CatalogueClient({ items, categories, defaultMonth, canEd
   }
 
   return (
-    <div className="space-y-4 text-slate-200">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h2 className="text-lg font-semibold text-white">Master Catalogue</h2>
-          <p className="text-xs text-slate-500 mt-0.5">All tracked items, current stock, and monthly movement.</p>
-        </div>
+    <div className="space-y-4 text-[var(--text-primary)]">
+      <div className="flex items-center justify-end flex-wrap gap-3">
         {canEdit && <AddItemButton categories={categories} />}
       </div>
 
       <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Find code or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#12151c] border border-[#232733] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
+            className="w-full bg-[var(--bg-card)] border border-[var(--border)] rounded-md pl-9 pr-3 py-1.5 text-sm placeholder-slate-500 focus:outline-none focus:border-teal-500/50"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <label className="text-xs uppercase tracking-wide text-slate-500">Category</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm"
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm"
           >
             <option value="All">All categories</option>
             {categories.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <label className="text-xs uppercase tracking-wide text-slate-500">Month</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Month</label>
           <input
             type="month"
             value={month}
             min="2026-01"
             max="2026-12"
             onChange={(e) => e.target.value && setMonth(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm text-slate-200 [color-scheme:dark]"
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm text-[var(--text-primary)]"
           />
         </div>
       </div>
 
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between flex-wrap gap-2">
-          <h3 className="text-sm font-medium text-slate-300">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between flex-wrap gap-2">
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">
             {quickFilter ? QUICK_FILTER_LABELS[quickFilter] : `Current stock, with ${MONTH_LABELS[month]} 2026 movement`}
           </h3>
           <div className="flex items-center gap-3">
@@ -173,7 +169,7 @@ export default function CatalogueClient({ items, categories, defaultMonth, canEd
                 Clear filter ✕
               </button>
             )}
-            <span className="text-[11px] text-slate-500">{filtered.length} of {items.length} items</span>
+            <span className="text-[11px] text-[var(--text-muted)]">{filtered.length} of {items.length} items</span>
             <button
               onClick={() => downloadCsv(filtered, MONTH_LABELS[month])}
               className="flex items-center gap-1.5 text-[11px] text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-500/10 px-2.5 py-1 rounded-md"
@@ -184,8 +180,8 @@ export default function CatalogueClient({ items, categories, defaultMonth, canEd
         </div>
         <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-[#12151c] z-10">
-              <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
+            <thead className="sticky top-0 bg-[var(--bg-card)] z-10">
+              <tr className="text-left text-[var(--text-muted)] text-xs uppercase tracking-wider border-b border-[var(--border)]">
                 <th className="px-4 py-2.5 cursor-pointer select-none" onClick={() => toggleSort("code")}>Code{sortArrow("code")}</th>
                 <th className="px-4 py-2.5 cursor-pointer select-none" onClick={() => toggleSort("description")}>Item Description{sortArrow("description")}</th>
                 <th className="px-4 py-2.5">Category</th>
@@ -199,26 +195,26 @@ export default function CatalogueClient({ items, categories, defaultMonth, canEd
             </thead>
             <tbody>
               {filtered.map((r) => (
-                <tr key={r.id} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
-                  <td className="px-4 py-2 font-mono text-xs text-slate-400">{r.code}</td>
+                <tr key={r.id} className="border-b border-[var(--border-subtle)] hover:bg-[var(--hover-overlay)]">
+                  <td className="px-4 py-2 font-mono text-xs text-[var(--text-secondary)]">{r.code}</td>
                   <td className="px-4 py-2">
                     <Link href={`/item/${r.id}`} className="text-teal-400 hover:text-teal-300 hover:underline font-medium">
                       {r.description}
                     </Link>
                   </td>
-                  <td className="px-4 py-2 text-slate-400 text-xs">{r.category}</td>
-                  <td className="px-4 py-2 text-slate-400">{r.uom}</td>
-                  <td className="px-4 py-2 text-right font-semibold text-white">{fmt(r.currentStock)}</td>
+                  <td className="px-4 py-2 text-[var(--text-secondary)] text-xs">{r.category}</td>
+                  <td className="px-4 py-2 text-[var(--text-secondary)]">{r.uom}</td>
+                  <td className="px-4 py-2 text-right font-semibold text-[var(--text-primary)]">{fmt(r.currentStock)}</td>
                   <td className="px-4 py-2 text-right text-emerald-400">{fmt(r.added)}</td>
                   <td className="px-4 py-2 text-right text-rose-400">{fmt(r.usage)}</td>
                   <td className="px-4 py-2 text-right">{r.runoutDays != null ? fmt(r.runoutDays) : "-"}</td>
-                  <td className="px-4 py-2 text-right text-[11px] text-slate-400">{r.runoutDate || "-"}</td>
+                  <td className="px-4 py-2 text-right text-[11px] text-[var(--text-secondary)]">{r.runoutDate || "-"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           {filtered.length === 0 && (
-            <div className="p-8 text-center text-slate-500 text-sm">No items match your search.</div>
+            <div className="p-8 text-center text-[var(--text-muted)] text-sm">No items match your search.</div>
           )}
         </div>
       </div>

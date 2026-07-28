@@ -15,7 +15,7 @@ function fmt(n) {
 
 const DONUT_COLORS = ["#14b8a6", "#38bdf8", "#a78bfa", "#34d399", "#f472b6", "#fb923c", "#94a3b8", "#4ade80"];
 
-export default function DashboardClient({ items, categories, defaultMonth, locationBreakdown }) {
+export default function DashboardClient({ items, categories, defaultMonth, locationBreakdown, userName }) {
   const [month, setMonth] = useState(defaultMonth);
   const [category, setCategory] = useState("All");
 
@@ -100,8 +100,11 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
   }
 
   return (
-    <div className="space-y-4 text-slate-200">
-      <div className="text-xs text-slate-500">
+    <div className="space-y-4 text-[var(--text-primary)]">
+      {userName && (
+        <h1 className="text-xl font-semibold text-[var(--text-primary)]">Welcome, {userName}</h1>
+      )}
+      <div className="text-xs text-[var(--text-muted)]">
         <span className="inline-flex items-center gap-1.5 text-emerald-400">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" /> Live balance
         </span> · updated instantly as GRN, Usage, and Damage entries are recorded · monthly movement history below can be browsed by month.
@@ -110,25 +113,25 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
       {/* Filters row */}
       <div className="flex justify-end">
         <div className="flex items-center gap-2 flex-wrap">
-          <label className="text-xs uppercase tracking-wide text-slate-500">Category</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm"
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm"
           >
             <option value="All">All categories</option>
             {categories.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <label className="text-xs uppercase tracking-wide text-slate-500">Movement Month</label>
+          <label className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Movement Month</label>
           <input
             type="month"
             value={month}
             min="2026-01"
             max="2026-12"
             onChange={(e) => e.target.value && setMonth(e.target.value)}
-            className="bg-[#12151c] border border-[#232733] rounded-md px-3 py-1.5 text-sm text-slate-200 [color-scheme:dark]"
+            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-md px-3 py-1.5 text-sm text-[var(--text-primary)]"
           />
         </div>
       </div>
@@ -143,13 +146,13 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
 
       {/* Bulk commodities + donut */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-        <div className="lg:col-span-2 bg-[#12151c] border border-[#232733] rounded-xl p-4">
+        <div className="lg:col-span-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-slate-300">
+            <h3 className="text-sm font-medium text-[var(--text-primary)]">
               {category === "All" ? "Bulk commodity levels" : `Top items — ${category}`}
             </h3>
             {category === "All" && (
-              <span className="text-[11px] text-slate-500 uppercase tracking-wider">{BULK_CATEGORIES.join(" · ")}</span>
+              <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider">{BULK_CATEGORIES.join(" · ")}</span>
             )}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -157,37 +160,37 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
               <Link
                 key={c.id}
                 href={`/item/${c.id}`}
-                className="block border border-[#232733] rounded-lg p-3 bg-[#0e1117] hover:border-teal-500/40 hover:bg-[#12161f] transition cursor-pointer"
+                className="block border border-[var(--border)] rounded-lg p-3 bg-[var(--bg-nested)] hover:border-teal-500/40 hover:bg-[#12161f] transition cursor-pointer"
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="w-7 h-7 rounded bg-teal-500/15 text-teal-400 flex items-center justify-center text-[10px] font-bold">
                     {c.uom.trim().slice(0, 2)}
                   </div>
-                  <span className="text-[9px] uppercase tracking-wide text-slate-500">{c.category}</span>
+                  <span className="text-[9px] uppercase tracking-wide text-[var(--text-muted)]">{c.category}</span>
                 </div>
-                <div className="text-xs text-slate-400 truncate" title={c.description}>
+                <div className="text-xs text-[var(--text-secondary)] truncate" title={c.description}>
                   {c.description}
                 </div>
-                <div className="text-lg font-semibold text-white mt-1">
-                  {fmt(c.currentStock)} <span className="text-xs text-slate-500">{c.uom}</span>
+                <div className="text-lg font-semibold text-[var(--text-primary)] mt-1">
+                  {fmt(c.currentStock)} <span className="text-xs text-[var(--text-muted)]">{c.uom}</span>
                 </div>
-                <div className="text-[11px] text-slate-500 mt-1">
+                <div className="text-[11px] text-[var(--text-muted)] mt-1">
                   {c.runoutDays != null ? `${fmt(c.runoutDays)}d left · reorder ${c.runoutDate}` : "no draw data"}
                 </div>
               </Link>
             ))}
             {bulkCommodities.length === 0 && (
-              <div className="col-span-4 text-sm text-slate-500 py-6 text-center">
+              <div className="col-span-4 text-sm text-[var(--text-muted)] py-6 text-center">
                 No stock to show for this filter.
               </div>
             )}
           </div>
         </div>
 
-        <div className="bg-[#12151c] border border-[#232733] rounded-xl p-4">
+        <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-slate-300">Stock concentration</h3>
-            <span className="text-[11px] text-slate-500 uppercase tracking-wider">By category</span>
+            <h3 className="text-sm font-medium text-[var(--text-primary)]">Stock concentration</h3>
+            <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider">By category</span>
           </div>
           <div className="h-40">
             {categoryBreakdown.length > 0 ? (
@@ -206,22 +209,22 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ background: "#12151c", border: "1px solid #232733", borderRadius: 8, fontSize: 12 }}
-                    labelStyle={{ color: "#e5e7eb" }}
-                    itemStyle={{ color: "#e5e7eb" }}
+                    contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
+                    labelStyle={{ color: "var(--text-primary)" }}
+                    itemStyle={{ color: "var(--text-primary)" }}
                     formatter={(value, name) => [fmt(value), name]}
                   />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-sm text-slate-500">
+              <div className="h-full flex items-center justify-center text-sm text-[var(--text-muted)]">
                 No data for this filter
               </div>
             )}
           </div>
           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
             {categoryBreakdown.map((d, i) => (
-              <div key={d.name} className="flex items-center gap-1 text-[10px] text-slate-400">
+              <div key={d.name} className="flex items-center gap-1 text-[10px] text-[var(--text-secondary)]">
                 <span className="w-2 h-2 rounded-full inline-block" style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} />
                 {d.name}
               </div>
@@ -232,15 +235,15 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
 
       {/* Sand & Aggregate — by location, per item */}
       {locationBreakdown && locationBreakdown.length > 0 && (
-        <div className="bg-[#12151c] border border-[#232733] rounded-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#232733] flex items-center justify-between flex-wrap gap-1">
-            <h3 className="text-sm font-medium text-slate-300">Sand &amp; Aggregate — by location</h3>
-            <span className="text-[11px] text-slate-500">Available balance = Received − Issued, from bin-card history</span>
+        <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between flex-wrap gap-1">
+            <h3 className="text-sm font-medium text-[var(--text-primary)]">Sand &amp; Aggregate — by location</h3>
+            <span className="text-[11px] text-[var(--text-muted)]">Available balance = Received − Issued, from bin-card history</span>
           </div>
           <div className="overflow-x-auto max-h-80 overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-[#12151c] z-10">
-                <tr className="text-left text-slate-500 text-xs uppercase tracking-wider border-b border-[#232733]">
+              <thead className="sticky top-0 bg-[var(--bg-card)] z-10">
+                <tr className="text-left text-[var(--text-muted)] text-xs uppercase tracking-wider border-b border-[var(--border)]">
                   <th className="px-4 py-2.5">Item</th>
                   <th className="px-4 py-2.5 text-right">
                     <span className="text-teal-400">Thilafushi</span> Received
@@ -267,7 +270,7 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
                   const thfAvailable = fmt(row.Thilafushi.received - row.Thilafushi.issued);
                   const mmgAvailable = fmt(row.Mamigili.received - row.Mamigili.issued);
                   return (
-                    <tr key={row.itemId} className="border-b border-[#1c2029] hover:bg-white/[0.03]">
+                    <tr key={row.itemId} className="border-b border-[var(--border-subtle)] hover:bg-[var(--hover-overlay)]">
                       <td className="px-4 py-2">
                         <Link href={`/item/${row.itemId}`} className="text-teal-400 hover:underline">
                           {row.description}
@@ -275,10 +278,10 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
                       </td>
                       <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Thilafushi.received)}</td>
                       <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Thilafushi.issued)}</td>
-                      <td className="px-4 py-2 text-right font-semibold text-white">{thfAvailable}</td>
+                      <td className="px-4 py-2 text-right font-semibold text-[var(--text-primary)]">{thfAvailable}</td>
                       <td className="px-4 py-2 text-right text-emerald-400">{fmt(row.Mamigili.received)}</td>
                       <td className="px-4 py-2 text-right text-rose-400">{fmt(row.Mamigili.issued)}</td>
-                      <td className="px-4 py-2 text-right font-semibold text-white">{mmgAvailable}</td>
+                      <td className="px-4 py-2 text-right font-semibold text-[var(--text-primary)]">{mmgAvailable}</td>
                     </tr>
                   );
                 })}
@@ -294,23 +297,23 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
 
 function StatCard({ icon: Icon, label, value, sub, accent = "default", onClick, active, href }) {
   const accentClass = {
-    default: "text-white",
+    default: "text-[var(--text-primary)]",
     rose: "text-rose-400",
     teal: "text-teal-400",
-    slate: "text-slate-300",
+    slate: "text-[var(--text-primary)]",
   }[accent];
 
-  const className = `text-left bg-[#12151c] border rounded-xl p-3 transition hover:border-slate-500 block ${
-    active ? "border-teal-500/60 ring-1 ring-teal-500/30" : "border-[#232733]"
+  const className = `text-left bg-[var(--bg-card)] border rounded-xl p-3 transition hover:border-slate-500 block ${
+    active ? "border-teal-500/60 ring-1 ring-teal-500/30" : "border-[var(--border)]"
   }`;
 
   const content = (
     <>
-      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
         {Icon && <Icon className="w-3.5 h-3.5" />} {label}
       </div>
       <div className={`text-2xl font-semibold mt-1.5 ${accentClass}`}>{fmt(value)}</div>
-      <div className="text-[11px] text-slate-500 mt-0.5">{sub}</div>
+      <div className="text-[11px] text-[var(--text-muted)] mt-0.5">{sub}</div>
     </>
   );
 

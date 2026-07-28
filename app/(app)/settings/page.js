@@ -16,21 +16,16 @@ export default async function SettingsPage() {
   if (!user) redirect("/login");
 
   return (
-    <div className="max-w-2xl space-y-6 text-slate-200">
-      <div>
-        <h2 className="text-lg font-semibold text-white">Settings</h2>
-        <p className="text-sm text-slate-500 mt-1">Your account and admin tools.</p>
-      </div>
-
-      <div className="bg-[#12151c] border border-[#232733] rounded-xl p-5">
+    <div className="max-w-2xl space-y-6 text-[var(--text-primary)]">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5">
         <div className="flex items-center gap-3">
           <AvatarUpload initialAvatarUrl={user.avatarDataUrl} name={user.name} />
           <div>
-            <div className="text-sm font-medium text-white">{user.name}</div>
-            <div className="text-xs text-slate-500">{user.email}</div>
+            <div className="text-sm font-medium text-[var(--text-primary)]">{user.name}</div>
+            <div className="text-xs text-[var(--text-muted)]">{user.email}</div>
           </div>
         </div>
-        <div className="mt-3 text-xs text-slate-400">
+        <div className="mt-3 text-xs text-[var(--text-secondary)]">
           Role: <span className="text-teal-400">{ROLE_LABEL[user.role] || user.role}</span>
         </div>
       </div>
@@ -39,8 +34,8 @@ export default async function SettingsPage() {
 
       {isAdmin(user) && (
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-slate-500 mb-2">Admin Tools</div>
-          <div className="bg-[#12151c] border border-[#232733] rounded-xl divide-y divide-[#1c2029] overflow-hidden">
+          <div className="text-[11px] uppercase tracking-wider text-[var(--text-muted)] mb-2">Admin Tools</div>
+          <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl divide-y divide-[var(--border-subtle)] overflow-hidden">
             <SettingsLink href="/settings/users" icon={Users} label="Manage Users" desc="Add teammates, set roles, remove access" />
             <SettingsLink href="/admin/upload" icon={UploadCloud} label="Upload Inventory File" desc="Merge an updated Excel report" />
             <SettingsLink href="/admin/upload-history" icon={History} label="Upload History" desc="See every file uploaded and by whom" />
@@ -55,15 +50,15 @@ export default async function SettingsPage() {
 
 function SettingsLink({ href, icon: Icon, label, desc, danger }) {
   return (
-    <Link href={href} className="flex items-center justify-between px-4 py-3 hover:bg-white/[0.03] transition">
+    <Link href={href} className="flex items-center justify-between px-4 py-3 hover:bg-[var(--hover-overlay)] transition">
       <div className="flex items-center gap-3">
-        <Icon className={`w-4 h-4 ${danger ? "text-rose-400" : "text-slate-400"}`} />
+        <Icon className={`w-4 h-4 ${danger ? "text-rose-400" : "text-[var(--text-secondary)]"}`} />
         <div>
-          <div className={`text-sm ${danger ? "text-rose-400" : "text-slate-200"}`}>{label}</div>
-          <div className="text-[11px] text-slate-500">{desc}</div>
+          <div className={`text-sm ${danger ? "text-rose-400" : "text-[var(--text-primary)]"}`}>{label}</div>
+          <div className="text-[11px] text-[var(--text-muted)]">{desc}</div>
         </div>
       </div>
-      <ChevronRight className="w-4 h-4 text-slate-600" />
+      <ChevronRight className="w-4 h-4 text-[var(--text-faint)]" />
     </Link>
   );
 }
