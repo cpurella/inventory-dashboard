@@ -27,6 +27,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "Incorrect email or password." }, { status: 401 });
     }
 
+    await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+
     const res = NextResponse.json({ ok: true, user: { id: user.id, name: user.name, email: user.email } });
     res.cookies.set(SESSION_COOKIE_NAME, createSessionCookieValue(user.id), {
       httpOnly: true,

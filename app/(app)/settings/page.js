@@ -40,7 +40,15 @@ export default async function SettingsPage() {
             <SettingsLink href="/admin/upload" icon={UploadCloud} label="Upload Inventory File" desc="Merge an updated Excel report" />
             <SettingsLink href="/admin/upload-history" icon={History} label="Upload History" desc="See every file uploaded and by whom" />
             <SettingsLink href="/admin/import-history" icon={History} label="Import Bin Card History" desc="Load detailed day-by-day historical entries" />
-            <SettingsLink href="/admin/seed" icon={RotateCcw} label="Reset to Original Data" desc="Danger zone — wipes all live entries" danger />
+          </div>
+        </div>
+      )}
+
+      {isAdmin(user) && (
+        <div>
+          <div className="text-[11px] uppercase tracking-wider text-rose-400 mb-2">Danger Zone</div>
+          <div className="border border-rose-500/30 bg-rose-500/5 rounded-xl overflow-hidden">
+            <SettingsLink href="/admin/seed" icon={RotateCcw} label="Reset to Original Data" desc="Wipes every live GRN/Usage/Damage entry — cannot be undone" danger />
           </div>
         </div>
       )}

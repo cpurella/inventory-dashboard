@@ -142,6 +142,11 @@ export default function UsersManagementClient({ currentUserId }) {
                   {u.name} {u.id === currentUserId && <span className="text-[10px] text-[var(--text-muted)]">(you)</span>}
                 </div>
                 <div className="text-[11px] text-[var(--text-muted)] truncate">{u.email}</div>
+                <div className="text-[10px] text-[var(--text-faint)] truncate">
+                  {u.lastLoginAt
+                    ? `Last login: ${new Date(u.lastLoginAt).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}`
+                    : "Never logged in"}
+                </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <select
