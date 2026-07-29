@@ -15,7 +15,7 @@ function fmt(n) {
 
 const DONUT_COLORS = ["#14b8a6", "#38bdf8", "#a78bfa", "#34d399", "#f472b6", "#fb923c", "#94a3b8", "#4ade80"];
 
-export default function DashboardClient({ items, categories, defaultMonth, locationBreakdown, userName }) {
+export default function DashboardClient({ items, categories, defaultMonth, locationBreakdown, userName, asOfDate }) {
   const [month, setMonth] = useState(defaultMonth);
   const [category, setCategory] = useState("All");
 
@@ -107,7 +107,9 @@ export default function DashboardClient({ items, categories, defaultMonth, locat
       <div className="text-xs text-[var(--text-muted)]">
         <span className="inline-flex items-center gap-1.5 text-emerald-400">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" /> Live balance
-        </span> · updated instantly as GRN, Usage, and Damage entries are recorded · monthly movement history below can be browsed by month.
+        </span> · updated instantly as GRN, Usage, and Damage entries are recorded
+        {asOfDate && <> · inventory data as of <span className="text-[var(--text-secondary)]">{asOfDate}</span></>}
+        {" "}· monthly movement history below can be browsed by month.
       </div>
 
       {/* Filters row */}

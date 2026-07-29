@@ -89,7 +89,24 @@ function parseWorkbook(arrayBuffer) {
   if (parsedItems.length === 0) {
     throw new Error("No item rows were found in this file.");
   }
-  return parsedItems;
+
+  // The PHY-Inventory-List sheet has an "AS AT" label + date near the top
+  // (row 3, roughly column N/O) showing what date the physical count reflects.
+  let asOfDate = null;
+  for (let r = 0; r < 6; r++) {
+    const row = phy[r];
+    if (!row) continue;
+    for (let c = 0; c < row.length; c++) {
+      if (String(row[c] || "").trim().toLowerCase() === "as at") {
+        const candidate = row[c + 1];
+        if (candidate instanceof Date) asOfDate = candidate.toISOString().slice(0, 10);
+        break;
+      }
+    }
+    if (asOfDate) break;
+  }
+
+  return { parsedItems, asOfDate };
 }
 
 export default function UploadClient() {
@@ -112,12 +129,12 @@ export default function UploadClient() {
     setStatus(null);
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const parsedItems = parseWorkbook(arrayBuffer);
+      const { parsedItems, asOfDate } = parseWorkbook(arrayBuffer);
 
       const res = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename: file.name, parsedItems }),
+        body: JSON.stringify({ filename: file.name, parsedItems, asOfDate }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Upload failed.");

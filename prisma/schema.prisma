@@ -18,6 +18,12 @@ model User {
   createdAt     DateTime  @default(now())
 }
 
+model AppSetting {
+  id                Int      @id @default(1)
+  inventoryAsOfDate DateTime?
+  updatedAt         DateTime @updatedAt
+}
+
 model UploadLog {
   id             Int      @id @default(autoincrement())
   filename       String

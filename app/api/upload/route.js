@@ -17,7 +17,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { filename, parsedItems } = body;
+    const { filename, parsedItems, asOfDate } = body;
 
     if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
       return NextResponse.json({ error: "No item rows were found in the uploaded file." }, { status: 400 });
@@ -88,6 +88,14 @@ export async function POST(request) {
     }
 
     const untouched = Math.max(0, existingItems.length - parsedItems.length);
+
+    if (asOfDate) {
+      await prisma.appSetting.upsert({
+        where: { id: 1 },
+        update: { inventoryAsOfDate: new Date(asOfDate) },
+        create: { id: 1, inventoryAsOfDate: new Date(asOfDate) },
+      });
+    }
 
     const user = requester;
     await prisma.uploadLog.create({
