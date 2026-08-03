@@ -9,6 +9,18 @@ function round2(n) {
   return typeof n === "number" && !Number.isNaN(n) ? Math.round(n * 100) / 100 : 0;
 }
 
+// Formats a Date using its LOCAL calendar fields (not UTC). SheetJS builds
+// date cells from local-time components, so converting with toISOString()
+// (which is always UTC) can shift the date back a day for any timezone
+// ahead of UTC -- e.g. "31-Jul-26" in Maldives (UTC+5) was coming out as
+// "2026-07-30". This avoids that shift entirely.
+function toLocalDateString(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 // Runs entirely in the browser -- reads the .xlsx and extracts just the item
 // rows as compact JSON, so only a small payload (not the whole file) ever
 // has to travel to the server. This is what avoids Vercel's request body
@@ -99,7 +111,7 @@ function parseWorkbook(arrayBuffer) {
     for (let c = 0; c < row.length; c++) {
       if (String(row[c] || "").trim().toLowerCase() === "as at") {
         const candidate = row[c + 1];
-        if (candidate instanceof Date) asOfDate = candidate.toISOString().slice(0, 10);
+        if (candidate instanceof Date) asOfDate = toLocalDateString(candidate);
         break;
       }
     }
