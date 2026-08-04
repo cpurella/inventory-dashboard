@@ -9,24 +9,17 @@ function round2(n) {
   return typeof n === "number" && !Number.isNaN(n) ? Math.round(n * 100) / 100 : 0;
 }
 
-// Formats a Date using its LOCAL calendar fields (not UTC). SheetJS builds
-// date cells from local-time components, so converting with toISOString()
-// (which is always UTC) can shift the date back a day for any timezone
-// ahead of UTC -- e.g. "31-Jul-26" in Maldives (UTC+5) was coming out as
-// "2026-07-30". This avoids that shift entirely.
-function toLocalDateString(date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
 // Runs entirely in the browser -- reads the .xlsx and extracts just the item
 // rows as compact JSON, so only a small payload (not the whole file) ever
 // has to travel to the server. This is what avoids Vercel's request body
 // size limit on larger workbooks.
 function parseWorkbook(arrayBuffer) {
-  const workbook = XLSX.read(arrayBuffer, { type: "array", cellDates: true });
+  // Deliberately NOT using cellDates:true here. Converting Excel dates to JS
+  // Date objects (and back) drags in timezone handling that shifted the
+  // "AS AT" date by a day. Instead we keep the raw Excel serial number for
+  // that one cell and convert it with pure calendar arithmetic (no
+  // timezone, no JS Date object) via XLSX.SSF.parse_date_code().
+  const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
   const phySheetName = workbook.SheetNames.find((n) =>
     n.toLowerCase().replace(/\s/g, "").includes("phy-inventory") ||
@@ -104,6 +97,8 @@ function parseWorkbook(arrayBuffer) {
 
   // The PHY-Inventory-List sheet has an "AS AT" label + date near the top
   // (row 3, roughly column N/O) showing what date the physical count reflects.
+  // The cell comes through as a raw Excel serial number (see comment above),
+  // so convert it with SSF's calendar math -- no timezone involved anywhere.
   let asOfDate = null;
   for (let r = 0; r < 6; r++) {
     const row = phy[r];
@@ -111,7 +106,15 @@ function parseWorkbook(arrayBuffer) {
     for (let c = 0; c < row.length; c++) {
       if (String(row[c] || "").trim().toLowerCase() === "as at") {
         const candidate = row[c + 1];
-        if (candidate instanceof Date) asOfDate = toLocalDateString(candidate);
+        if (typeof candidate === "number") {
+          const dc = XLSX.SSF.parse_date_code(candidate);
+          if (dc) {
+            asOfDate = `${dc.y}-${String(dc.m).padStart(2, "0")}-${String(dc.d).padStart(2, "0")}`;
+          }
+        } else if (candidate instanceof Date) {
+          // Fallback for the rare case it still comes through as a Date.
+          asOfDate = `${candidate.getUTCFullYear()}-${String(candidate.getUTCMonth() + 1).padStart(2, "0")}-${String(candidate.getUTCDate()).padStart(2, "0")}`;
+        }
         break;
       }
     }
